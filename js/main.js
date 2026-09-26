@@ -47,7 +47,8 @@
   function applyTheme() {
     const dark = S.isDark();
     screen.dataset.theme = dark ? 'dark' : 'light';
-    document.querySelector('meta[name="theme-color"]').setAttribute('content', dark ? '#000000' : '#0b0b0f');
+    const meta = document.querySelector('meta[name="theme-color"]');
+    if (meta) meta.setAttribute('content', dark ? '#000000' : '#0b0b0f');
     OS.chrome && OS.chrome.update();
     OS.bus.emit('theme', dark);
   }
@@ -83,6 +84,12 @@
     const mq = window.matchMedia('(prefers-color-scheme: dark)');
     const onMq = () => { if (S.get('theme') === 'auto') applyTheme(); };
     if (mq.addEventListener) mq.addEventListener('change', onMq); else if (mq.addListener) mq.addListener(onMq);
+  }
+
+  // Si la página que nos contiene fija un tema en <html data-theme>, síguelo en «Automático»
+  if (window.MutationObserver) {
+    new MutationObserver(() => { if (S.get('theme') === 'auto') applyTheme(); })
+      .observe(root, { attributes: true, attributeFilter: ['data-theme'] });
   }
 
   let resizeT = null;

@@ -43,7 +43,7 @@
           </div>
         </div>
         <div class="sf-web"><div class="sf-progress"><i></i></div><iframe title="Página web" referrerpolicy="no-referrer" sandbox="allow-scripts allow-same-origin allow-forms allow-popups"></iframe>
-          <div class="sf-note"><span>¿No se ve la página? Algunos sitios no permiten mostrarse dentro de otra web.</span><button class="link" data-ext>Abrir fuera</button></div></div>
+          <div class="sf-note"><span>¿No se ve la página? Algunos sitios no permiten mostrarse dentro de otra web.</span><a class="link" data-ext href="#" target="_blank" rel="noopener noreferrer">Abrir fuera</a></div></div>
         <form class="sf-bar">
           <button type="button" class="glass-btn round sf-back" aria-label="Atrás">${OS.icon('chevronLeft')}</button>
           <label class="sf-addr glass refract">${OS.icon('search')}<input type="text" inputmode="url" autocomplete="off" spellcheck="false" placeholder="Buscar o escribir sitio web"><button type="button" class="sf-reload" aria-label="Recargar">${OS.icon('reload')}</button></label>
@@ -73,6 +73,7 @@
         void prog.offsetWidth;
         prog.classList.add('loading');
         frame.src = url;
+        ext.href = url;
         input.blur();
       }
       frame.addEventListener('load', () => { if (!current) return; prog.classList.remove('loading'); prog.classList.add('done'); });
@@ -92,11 +93,17 @@
         else if (current) showStart();
       });
       root.querySelector('.sf-reload').addEventListener('click', () => { if (current) go(current, false); });
-      root.querySelector('[data-ext]').addEventListener('click', () => { if (current) window.open(current, '_blank', 'noopener'); });
+      const ext = root.querySelector('[data-ext]');
+      ext.addEventListener('click', (e) => { if (!current) e.preventDefault(); });
+      const openOutside = (url) => {
+        const a = document.createElement('a');
+        a.href = url; a.target = '_blank'; a.rel = 'noopener noreferrer';
+        document.body.appendChild(a); a.click(); a.remove();
+      };
       root.querySelector('.sf-more').addEventListener('click', async () => {
         const i = await OS.ui.alert({ title: current ? host(current) : 'Safari', buttons: [{ label: 'Página de inicio' }, { label: 'Abrir en el navegador' }, { label: 'Copiar enlace' }, { label: 'Cancelar' }], host: root });
         if (i === 0) showStart();
-        if (i === 1 && current) window.open(current, '_blank', 'noopener');
+        if (i === 1 && current) openOutside(current);
         if (i === 2 && current) { try { await navigator.clipboard.writeText(current); OS.ui.toast('Enlace copiado', 'check'); } catch (e) { /* sin portapapeles */ } }
       });
 

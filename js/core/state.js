@@ -78,7 +78,11 @@
     /** Tema efectivo (resuelve "auto"). */
     isDark() {
       const t = data.theme;
-      if (t === 'auto') return !!(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+      if (t === 'auto') {
+        const forced = document.documentElement.getAttribute('data-theme');
+        if (forced === 'dark' || forced === 'light') return forced === 'dark';
+        return !!(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+      }
       return t === 'dark';
     },
   };
