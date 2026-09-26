@@ -152,7 +152,10 @@
   const lib = {
     list: () => ensure(),
     count: () => ensure().length,
-    featured() { const L = ensure(); return L[L.length - 1 - (new Date().getDate() % 6)].src; },
+    featured() {
+      const L = ensure().filter((x) => ['mountains', 'lake', 'aurora', 'sea'].includes(x.kind));
+      return L.length ? L[new Date().getDate() % L.length].src : ensure()[0].src;
+    },
     add(src, meta = {}) {
       ensure();
       const p = { id: uid(), src, date: Date.now(), kind: meta.kind || 'camera', place: meta.place || 'Madrid' };

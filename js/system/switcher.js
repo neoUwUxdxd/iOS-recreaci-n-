@@ -105,7 +105,7 @@
         w.el.style.transition = TRANS;
         w.el.style.opacity = '0';
         w.el.style.transform = frame(order.indexOf(id)).transform.replace(/scale\(([\d.]+)\)/, (m, v) => `scale(${v * 0.85})`);
-        setTimeout(() => { w.el.classList.add('hidden'); clearStyles(w.el); }, 320);
+        setTimeout(() => { if (OS.sys.current !== id && !OS.sys.switcher) { w.el.classList.add('hidden'); clearStyles(w.el); } }, 320);
         try { w.inst.onHide && w.inst.onHide(); } catch (e) { console.error(e); }
       });
       OS.chrome.update();
@@ -124,7 +124,7 @@
         if (!ow || oid === id) return;
         ow.el.style.transition = TRANS;
         ow.el.style.opacity = '0';
-        setTimeout(() => { ow.el.classList.add('hidden'); clearStyles(ow.el); }, 300);
+        setTimeout(() => { if (OS.sys.current !== oid && !OS.sys.switcher) { ow.el.classList.add('hidden'); clearStyles(ow.el); } }, 300);
       });
       w.el.style.transition = TRANS;
       w.el.style.zIndex = '200';

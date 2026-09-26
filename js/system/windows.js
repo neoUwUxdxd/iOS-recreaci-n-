@@ -120,7 +120,17 @@
       touch(id);
       const r = originRect(id, originEl);
       const el = w.el;
+      if (w.closing) {
+        // Se reabre mientras se cerraba: cancela la animación de cierre
+        w.closing.onfinish = null;
+        w.closing.cancel();
+        w.closing = null;
+        const old = el.querySelector(':scope > .app-splash');
+        if (old) old.remove();
+      }
       el.classList.remove('hidden', 'in-switcher');
+      el.style.transition = '';
+      el.style.opacity = '';
       el.style.zIndex = '5';
       const sp = addSplash(w);
       const from = iconFrame(r);
@@ -167,10 +177,12 @@
       el.style.zIndex = '5';
       const a = animate(el, [from, to], { duration: 480, easing: 'cubic-bezier(.3,1,.4,1)', fill: 'forwards' });
       animate(sp, [{ opacity: 0 }, { opacity: 0, offset: 0.35 }, { opacity: 1 }], { duration: 480, easing: 'linear', fill: 'forwards' });
+      w.closing = a;
       OS.sys.current = null;
       OS.sys.hideStatus = false;
       OS.chrome.update();
       a.onfinish = () => {
+        w.closing = null;
         el.classList.add('hidden');
         a.cancel();
         el.style.transform = '';
@@ -206,7 +218,7 @@
       if (cur) {
         const cw = wins.get(cur);
         const a = animate(cw.el, [{ transform: 'translateX(0)' }, { transform: `translateX(${dir * W}px)` }], { duration: 420, easing: ease.spring, fill: 'forwards' });
-        a.onfinish = () => { cw.el.classList.add('hidden'); a.cancel(); };
+        a.onfinish = () => { if (OS.sys.current !== cur) cw.el.classList.add('hidden'); a.cancel(); };
         try { cw.inst.onHide && cw.inst.onHide(); } catch (e) { console.error(e); }
       }
       setForeground(id);

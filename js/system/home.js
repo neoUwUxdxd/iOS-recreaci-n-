@@ -108,15 +108,61 @@
     return `<div class="home-page" data-page="${pi}" style="width:${g.W}px">${html}</div>`;
   }
 
+  const pageCount = () => layout.pages.length + 1;
+
+  /* ---------- Biblioteca de apps ---------- */
+  const LIB = [
+    ['Sugerencias', ['siri', 'camera', 'messages', 'photos']],
+    ['Añadidas recientemente', ['translate', 'fitness', 'books', 'home']],
+    ['Utilidades', ['settings', 'calculator', 'clock', 'files', 'maps']],
+    ['Productividad y finanzas', ['notes', 'reminders', 'calendar', 'mail', 'wallet']],
+    ['Creatividad', ['photos', 'camera', 'music', 'podcasts']],
+    ['Información y lectura', ['weather', 'safari', 'books', 'podcasts']],
+    ['Salud y forma física', ['health', 'fitness']],
+    ['Social', ['messages', 'phone', 'mail']],
+  ];
+  let libQuery = '';
+
+  function libraryHTML() {
+    const q = OS.util.norm(libQuery);
+    let body;
+    if (q) {
+      const hits = OS.appList.filter((a) => OS.util.norm(a.name).includes(q));
+      body = `<div class="lib-list glass-clear">${hits.map((a) => `<div class="lib-row lib-app" data-id="${a.id}">${OS.iconHTML(a.id)}<span>${esc(a.name)}</span></div>`).join('') || '<p class="lib-none">Sin resultados</p>'}</div>`;
+    } else {
+      body = `<div class="lib-grid">${LIB.map(([name, ids]) => {
+        const big = ids.length > 4 ? ids.slice(0, 3) : ids;
+        const rest = ids.length > 4 ? ids.slice(3) : [];
+        return `<div class="lib-cat"><div class="lib-box glass-clear">${big.map((id) => `<div class="lib-app" data-id="${id}">${OS.iconHTML(id)}</div>`).join('')}${rest.length ? `<div class="lib-mini">${rest.slice(0, 4).map((id) => `<div class="lib-app" data-id="${id}">${OS.iconHTML(id)}</div>`).join('')}</div>` : ''}</div><div class="lib-name">${esc(name)}</div></div>`;
+      }).join('')}</div>`;
+    }
+    return `<div class="home-page app-library" data-library style="width:${geo.W}px">
+      <label class="lib-search glass-clear">${OS.icon('search')}<input placeholder="Biblioteca de apps" value="${esc(libQuery)}" aria-label="Buscar en la Biblioteca de apps"></label>
+      <div class="lib-scroll">${body}</div></div>`;
+  }
+
+  home.addEventListener('input', (e) => {
+    if (!e.target.closest('.lib-search')) return;
+    libQuery = e.target.value;
+    const pg = home.querySelector('[data-library]');
+    const pos = e.target.selectionStart;
+    pg.outerHTML = libraryHTML();
+    const inp = home.querySelector('.lib-search input');
+    inp.focus();
+    try { inp.setSelectionRange(pos, pos); } catch (err) { /* nada */ }
+    OS.updateDynamicIcons(home);
+  });
+  home.addEventListener('keydown', (e) => { if (e.target.closest('.lib-search')) e.stopPropagation(); });
+
   function render() {
     geo = computeGeo();
     home.style.setProperty('--icon', geo.icon + 'px');
     home.innerHTML = `
       <div class="edit-bar"><span></span><button class="glass-btn glass-clear" data-edit-done>Listo</button></div>
-      <div class="home-pages" style="width:${geo.W * layout.pages.length}px">${layout.pages.map(pageHTML).join('')}</div>
+      <div class="home-pages" style="width:${geo.W * pageCount()}px">${layout.pages.map(pageHTML).join('')}${libraryHTML()}</div>
       <div class="home-search glass-clear refract" role="button" aria-label="Buscar">
         <span class="txt">${OS.icon('search')}Buscar</span>
-        <span class="dots">${layout.pages.map((_, i) => `<i class="${i === page ? 'on' : ''}"></i>`).join('')}</span>
+        <span class="dots">${Array.from({ length: pageCount() }, (_, i) => `<i class="${i === page ? 'on' : ''}"></i>`).join('')}</span>
       </div>
       <div class="dock glass-clear refract">${layout.dock.map((id) => `<div class="dock-item" data-id="${id}"><div class="icon-wrap">${OS.iconHTML(id)}${badges[id] ? `<span class="badge">${badges[id]}</span>` : ''}</div></div>`).join('')}</div>`;
     pagesEl = home.querySelector('.home-pages');
@@ -137,11 +183,12 @@
   }
 
   function setPage(i, animated = true) {
-    page = clamp(i, 0, layout.pages.length - 1);
+    page = clamp(i, 0, pageCount() - 1);
     if (!pagesEl) return;
     pagesEl.style.transition = animated ? 'transform .45s cubic-bezier(.2,.9,.24,1)' : 'none';
     pagesEl.style.transform = `translateX(${-page * geo.W}px)`;
     home.querySelectorAll('.home-search .dots i').forEach((d, k) => d.classList.toggle('on', k === page));
+    home.classList.toggle('on-library', page === layout.pages.length);
   }
 
   function flashDots() {
@@ -180,10 +227,10 @@
   /* ---------- Gestos ---------- */
   home.addEventListener('pointerdown', (e) => {
     if (e.button !== 0) return;
-    if (e.target.closest('[data-edit-done]')) return;
+    if (e.target.closest('[data-edit-done], .lib-search')) return;
     const start = pt(e);
     const t0 = performance.now();
-    const item = e.target.closest('.home-item, .dock-item');
+    const item = e.target.closest('.home-item, .dock-item, .lib-app');
     const widget = e.target.closest('.widget');
     const onSearch = e.target.closest('.home-search');
     let mode = null; // 'page' | 'spot' | 'drag'
@@ -193,7 +240,7 @@
     interacting = true;
     home.setPointerCapture(e.pointerId);
 
-    const lp = (item || widget) ? setTimeout(() => {
+    const lp = ((item && !item.classList.contains('lib-app')) || widget) ? setTimeout(() => {
       longFired = true;
       enterEdit();
       if (item && item.classList.contains('home-item')) beginDrag(item, start);
@@ -216,18 +263,22 @@
         if (!mode) {
           if (editing && item && item.classList.contains('home-item')) beginDrag(item, start);
           else if (Math.abs(dx) > Math.abs(dy)) { mode = 'page'; flashDots(); }
-          else if (dy > 0 && !editing) mode = 'spot';
+          else if (dy > 0 && !editing && page < layout.pages.length) mode = 'spot';
+          else if (page === layout.pages.length) mode = 'libscroll';
           else mode = 'none';
         }
       }
       if (mode === 'page') {
         let off = -page * geo.W + dx;
-        const max = 0, min = -(layout.pages.length - 1) * geo.W;
+        const max = 0, min = -(pageCount() - 1) * geo.W;
         if (off > max) off = max + (off - max) * 0.35;
         if (off < min) off = min + (off - min) * 0.35;
         pagesEl.style.transition = 'none';
         pagesEl.style.transform = `translateX(${off}px)`;
         searchEl.classList.add('paging');
+      } else if (mode === 'libscroll') {
+        const sc = home.querySelector('.lib-scroll');
+        if (sc) { sc.scrollTop = (sc._st0 ?? (sc._st0 = sc.scrollTop)) - dy; }
       } else if (mode === 'spot') {
         const prog = clamp(dy / 160, 0, 1);
         home.style.transition = 'none';
@@ -283,6 +334,8 @@
         S.set('layout', JSON.parse(JSON.stringify(layout)));
         return;
       }
+      const lsc = home.querySelector('.lib-scroll');
+      if (lsc) lsc._st0 = undefined;
       if (moved || longFired) return;
       // Toque
       if (editing) { if (!item && !widget) exitEdit(); return; }
@@ -303,6 +356,11 @@
 
   home.addEventListener('click', (e) => { if (e.target.closest('[data-edit-done]')) exitEdit(); });
   home.addEventListener('wheel', (e) => {
+    if (page === layout.pages.length && Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
+      const sc = home.querySelector('.lib-scroll');
+      if (sc) sc.scrollTop += e.deltaY;
+      return;
+    }
     if (Math.abs(e.deltaX) > Math.abs(e.deltaY) && Math.abs(e.deltaX) > 30) {
       const now2 = Date.now();
       if (now2 - (home._wheelT || 0) < 450) return;
