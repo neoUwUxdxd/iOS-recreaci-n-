@@ -2,7 +2,7 @@
 (function () {
   'use strict';
 
-  const { h, esc, seeded, fmt } = OS.util;
+  const { esc, seeded, fmt } = OS.util;
 
   const CITY = { name: 'Madrid', lat: 40.4168, lon: -3.7038 };
   const COND = {

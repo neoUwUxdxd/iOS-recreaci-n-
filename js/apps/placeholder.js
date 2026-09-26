@@ -2,7 +2,7 @@
 (function () {
   'use strict';
 
-  const { h, esc } = OS.util;
+  const { esc } = OS.util;
 
   const BLURBS = {
     health: 'En iOS 27.2 llegará una app Salud rediseñada con información de salud generada por Apple Intelligence.',

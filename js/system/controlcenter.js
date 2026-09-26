@@ -2,7 +2,7 @@
 (function () {
   'use strict';
 
-  const { h, esc, clamp, pt } = OS.util;
+  const { esc, clamp, pt } = OS.util;
   const S = OS.state;
   const cc = document.getElementById('control-center');
 

@@ -2,7 +2,7 @@
 (function () {
   'use strict';
 
-  const { h, clamp, longPress } = OS.util;
+  const { clamp, longPress } = OS.util;
   const S = OS.state;
   const screen = document.getElementById('screen');
   const hud = document.getElementById('hud');

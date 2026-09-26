@@ -2,7 +2,7 @@
 (function () {
   'use strict';
 
-  const { h, esc } = OS.util;
+  const { esc } = OS.util;
 
   const FAVS = [
     { name: 'Wikipedia', url: 'https://es.wikipedia.org/wiki/IOS_27', color: '#e8e8e8', ink: '#000', letter: 'W' },
@@ -51,7 +51,6 @@
         </form>`;
 
       const start = root.querySelector('.sf-start');
-      const web = root.querySelector('.sf-web');
       const frame = root.querySelector('iframe');
       const input = root.querySelector('.sf-addr input');
       const prog = root.querySelector('.sf-progress');

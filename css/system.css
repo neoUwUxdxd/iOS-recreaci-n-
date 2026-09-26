@@ -211,3 +211,6 @@ html.fullscreen .app-window { border-radius: 0; }
   text-shadow: 0 1px 3px rgba(0, 0, 0, .35);
 }
 .sw-label .app-icon { width: 30px; height: 30px; border-radius: 8px; }
+.sb-carrier { display: none; font-size: 15px; letter-spacing: -.01em; white-space: nowrap; }
+.status-bar.on-lock .sb-time { display: none; }
+.status-bar.on-lock .sb-carrier { display: inline; }

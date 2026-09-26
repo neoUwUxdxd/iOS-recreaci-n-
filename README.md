@@ -31,6 +31,7 @@ Recreación de **iOS 27** hecha solo con HTML, CSS y JavaScript. No usa framewor
 **Sistema**
 - Pantalla bloqueada con widgets, notificaciones apiladas, reproductor, linterna, cámara y **pantalla siempre activa**.
 - Pantalla de inicio con varias páginas, widgets, Dock y búsqueda (Spotlight). Mantén pulsado un icono para **reordenar** las apps.
+- **Biblioteca de apps** en la última página, con categorías y buscador.
 - Iconos en cuatro estilos: *por defecto*, *oscuro*, *transparente* y *tintado* (con el tono que elijas).
 - **Dynamic Island** con Actividades en vivo: temporizador, música, llamadas y navegación. Pulsa o mantén pulsado para ampliarla.
 - **Centro de control** y **Centro de notificaciones** que siguen al dedo.

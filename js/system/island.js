@@ -2,7 +2,7 @@
 (function () {
   'use strict';
 
-  const { h, longPress } = OS.util;
+  const { longPress } = OS.util;
   const el = document.getElementById('island');
   el.innerHTML = '<div class="island-inner"></div><div class="island-cam"></div>';
   const inner = el.querySelector('.island-inner');

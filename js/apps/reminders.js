@@ -21,7 +21,6 @@
     create(root) {
       root.classList.add('grouped', 'rem-app');
       const nav = OS.ui.navStack(root);
-      let filter = 'all';
       let showDone = false;
       let quiet = false;
 
@@ -48,7 +47,6 @@
       }
 
       function listPage(id) {
-        filter = id;
         const def = DEFS.find((d) => d[0] === id) || DEFS[2];
         const p = OS.ui.page({ title: def[1], back: () => nav.pop(), actions: `<button class="glass-btn" data-toggle-done>${showDone ? 'Ocultar' : 'Mostrar'} terminados</button>` });
         p.classList.add('rem-list-page');

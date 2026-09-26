@@ -2,7 +2,7 @@
 (function () {
   'use strict';
 
-  const { h, esc, fmt, clamp } = OS.util;
+  const { h, esc, fmt } = OS.util;
   const S = OS.state;
   const { cell, group, toggle, slider, segmented } = OS.ui;
 

@@ -2,7 +2,7 @@
 (function () {
   'use strict';
 
-  const { h, esc, seeded, pt, clamp } = OS.util;
+  const { esc, seeded, pt, clamp } = OS.util;
 
   const SIZE = 2400;
   const ME = { x: 1200, y: 1200 };
@@ -52,7 +52,6 @@
       root.classList.add('maps-app');
       let view = { x: ME.x, y: ME.y, z: 0.62 };
       let selected = null;
-      let route = null;
 
       root.innerHTML = `
         <div class="mp-stage"><svg class="mp-svg" viewBox="0 0 ${SIZE} ${SIZE}" width="${SIZE}" height="${SIZE}">${buildMap()}<g class="mp-route"></g><g class="mp-pins">${PLACES.map((p) => `<g class="mp-pin" data-id="${p.id}" transform="translate(${p.x} ${p.y})"><circle r="17" fill="${p.color}" stroke="#fff" stroke-width="3"/><g transform="translate(-9 -9) scale(.75)" fill="#fff" color="#fff">${OS.glyphs[p.icon]}</g><text y="36" text-anchor="middle" class="mp-pinlabel">${esc(p.name)}</text></g>`).join('')}</g><g class="mp-me" transform="translate(${ME.x} ${ME.y})"><circle class="mp-me-halo" r="40"/><circle r="11" fill="#0a84ff" stroke="#fff" stroke-width="4"/></g></svg></div>
@@ -102,7 +101,6 @@
 
       function drawRoute(p) {
         const pts = [[ME.x, ME.y], [p.x, ME.y], [p.x, p.y]];
-        route = p;
         root.querySelector('.mp-route').innerHTML = `<polyline points="${pts.map((q) => q.join(',')).join(' ')}" class="mp-rt-b"/><polyline points="${pts.map((q) => q.join(',')).join(' ')}" class="mp-rt"/>`;
         const len = Math.abs(p.x - ME.x) + Math.abs(p.y - ME.y);
         const mins = Math.max(2, Math.round(len / 60));
@@ -124,7 +122,6 @@
       }
 
       function endRoute() {
-        route = null;
         root.querySelector('.mp-route').innerHTML = '';
         OS.island.clear('nav');
         sheet.classList.remove('tall');

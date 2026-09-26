@@ -2,7 +2,7 @@
 (function () {
   'use strict';
 
-  const { h, esc, calc, fmt } = OS.util;
+  const { esc, calc, fmt } = OS.util;
   const el = document.getElementById('spotlight');
   el.innerHTML = `
     <div class="spot-bg"></div>

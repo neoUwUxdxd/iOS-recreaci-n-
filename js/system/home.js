@@ -2,7 +2,7 @@
 (function () {
   'use strict';
 
-  const { h, esc, fmt, clamp, pt, store, animate, ease } = OS.util;
+  const { h, esc, fmt, clamp, pt } = OS.util;
   const S = OS.state;
 
   const home = document.getElementById('home');

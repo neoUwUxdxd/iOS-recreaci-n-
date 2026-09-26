@@ -2,7 +2,7 @@
 (function () {
   'use strict';
 
-  const { h, calc, fmt, pt } = OS.util;
+  const { calc, fmt, pt } = OS.util;
 
   const KEYS = [
     ['back', 'fn'], ['neg', 'fn'], ['%', 'fn'], ['÷', 'op'],

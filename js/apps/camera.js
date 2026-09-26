@@ -2,7 +2,7 @@
 (function () {
   'use strict';
 
-  const { h, esc, store } = OS.util;
+  const { h, store } = OS.util;
 
   const ALL_CONTROLS = {
     flash: { label: 'Flash', icon: 'bolt' },

@@ -2,7 +2,7 @@
 (function () {
   'use strict';
 
-  const { h, esc, fmt, clamp, pt, animate, ease } = OS.util;
+  const { esc, fmt, clamp, pt, animate, ease } = OS.util;
   const S = OS.state;
 
   const lock = document.getElementById('lock');

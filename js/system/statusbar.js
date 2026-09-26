@@ -2,14 +2,14 @@
 (function () {
   'use strict';
 
-  const { h, fmt } = OS.util;
+  const { fmt } = OS.util;
   const S = OS.state;
 
   const bar = document.getElementById('status-bar');
   const indicator = document.getElementById('home-indicator');
 
   bar.innerHTML = `
-    <div class="sb-left"><span class="sb-time">9:41</span><span class="sb-focus sb-hidden">${OS.icon('moon')}</span></div>
+    <div class="sb-left"><span class="sb-time">9:41</span><span class="sb-carrier">Movistar</span><span class="sb-focus sb-hidden">${OS.icon('moon')}</span></div>
     <div class="sb-right">
       <span class="sb-plane sb-hidden">${OS.icon('airplane')}</span>
       <span class="sb-signal"><i></i><i></i><i></i><i></i></span>
@@ -37,6 +37,7 @@
     $sig.classList.toggle('off', !S.get('cellular'));
     $wifi.classList.toggle('sb-hidden', !S.get('wifi'));
     $focus.classList.toggle('sb-hidden', !S.get('focus'));
+    bar.querySelector('.sb-carrier').textContent = air ? '' : S.get('cellular') ? 'Movistar' : 'Sin servicio';
   }
 
   function renderBattery() {
@@ -91,6 +92,8 @@
       } else dark = !!wpLight;
       if (sys.ccOpen) hideIndicator = true;
       bar.classList.toggle('dark', dark);
+      // En la pantalla bloqueada iOS muestra el operador en lugar de la hora
+      bar.classList.toggle('on-lock', !!S.get('locked') && !sys.ccOpen && !sys.ncOpen);
       indicator.classList.toggle('dark', dark && !sys.ccOpen);
       indicator.classList.toggle('hidden', hideIndicator);
       bar.classList.toggle('hidden', !!sys.hideStatus && !sys.ccOpen && !sys.ncOpen);
