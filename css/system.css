@@ -1,0 +1,210 @@
+/* ==========================================================================
+   Sistema: barra de estado, Dynamic Island, indicador de inicio, HUD,
+   ventanas de apps, multitarea y banners.
+   ========================================================================== */
+
+/* ---------- Barra de estado ---------- */
+.status-bar {
+  height: 54px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0;
+  color: #fff;
+  font-weight: 600;
+  font-size: 17px;
+  transition: color .3s, opacity .3s;
+}
+.status-bar.dark { color: #000; }
+.status-bar.hidden { opacity: 0; }
+.sb-left, .sb-right { display: flex; align-items: center; gap: 6px; height: 100%; padding-top: 5px; width: calc((var(--W, 402px) - 125px) / 2); justify-content: center; }
+.sb-left { padding-left: 16px; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
+.sb-right { justify-content: flex-end; padding-right: 26px; }
+.sb-right { gap: 6px; }
+.sb-signal { display: flex; align-items: flex-end; gap: 1.5px; height: 12px; }
+.sb-signal i { width: 3px; border-radius: 1px; background: currentColor; }
+.sb-signal i:nth-child(1) { height: 4px; }
+.sb-signal i:nth-child(2) { height: 6.5px; }
+.sb-signal i:nth-child(3) { height: 9px; }
+.sb-signal i:nth-child(4) { height: 11.5px; }
+.sb-signal.weak i:nth-child(n+4) { opacity: .3; }
+.sb-signal.off i { opacity: .3; }
+.sb-wifi { width: 17px; height: 12px; }
+.sb-plane { font-size: 16px; }
+.sb-battery { position: relative; width: 27px; height: 13px; border-radius: 4.2px; border: 1.2px solid currentColor; opacity: 1; display: flex; align-items: center; padding: 1.3px; }
+.sb-battery::after { content: ""; position: absolute; right: -4px; top: 3.6px; width: 2px; height: 4.5px; border-radius: 0 2px 2px 0; background: currentColor; opacity: .45; }
+.sb-battery > b { display: block; height: 100%; border-radius: 2.2px; background: currentColor; }
+.sb-battery.low > b { background: #ff3b30; }
+.sb-battery.saver > b { background: #ffcc00; }
+.sb-battery.charging > b { background: #34c759; }
+.sb-battery.pct { width: 30px; border: 0; background: currentColor; padding: 0; justify-content: center; }
+.sb-battery.pct > b { display: none; }
+.sb-battery.pct > em { font-style: normal; font-size: 11px; font-weight: 700; color: #000; mix-blend-mode: normal; letter-spacing: -.02em; }
+.status-bar.dark .sb-battery.pct > em { color: #fff; }
+.sb-battery > em { display: none; }
+.sb-battery.pct > em { display: block; }
+.sb-focus { font-size: 14px; }
+.sb-hidden { display: none !important; }
+
+/* ---------- Dynamic Island ---------- */
+.island {
+  position: absolute;
+  top: 11px;
+  left: 50%;
+  width: 125px;
+  height: 37px;
+  margin-left: -62.5px;
+  border-radius: 22px;
+  background: #000;
+  color: #fff;
+  overflow: hidden;
+  transition:
+    width .55s cubic-bezier(.3, 1.28, .45, 1),
+    height .55s cubic-bezier(.3, 1.28, .45, 1),
+    margin-left .55s cubic-bezier(.3, 1.28, .45, 1),
+    border-radius .55s cubic-bezier(.3, 1.28, .45, 1),
+    top .55s cubic-bezier(.3, 1.28, .45, 1);
+  cursor: pointer;
+  box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
+}
+.island.expanded { box-shadow: 0 10px 40px rgba(0, 0, 0, .35); }
+.island-inner { position: absolute; inset: 0; opacity: 0; transition: opacity .25s .12s; }
+.island.has-content .island-inner { opacity: 1; }
+.island.morphing .island-inner { opacity: 0; transition-delay: 0s; transition-duration: .1s; }
+.island-cam { position: absolute; right: 12px; top: 50%; width: 12px; height: 12px; margin-top: -6px; border-radius: 50%; background: radial-gradient(circle at 35% 35%, #26304a 0 22%, #0b0d14 45%, #050507 70%); opacity: .9; }
+.island.has-content .island-cam { opacity: 0; }
+
+.isl-compact { position: absolute; inset: 0; display: flex; align-items: center; justify-content: space-between; padding: 0 12px; font-size: 15px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.isl-compact .l, .isl-compact .r { display: flex; align-items: center; gap: 6px; }
+.isl-art { width: 24px; height: 24px; border-radius: 6px; background-size: cover; }
+.isl-bars { display: flex; align-items: center; gap: 2px; height: 16px; }
+.isl-bars i { width: 3px; height: 30%; border-radius: 2px; background: var(--c, #ff375f); animation: bars 1s ease-in-out infinite; }
+.isl-bars i:nth-child(2) { animation-delay: -.3s; }
+.isl-bars i:nth-child(3) { animation-delay: -.6s; }
+.isl-bars i:nth-child(4) { animation-delay: -.15s; }
+.isl-bars.paused i { animation-play-state: paused; height: 20%; }
+@keyframes bars { 0%, 100% { height: 25%; } 50% { height: 100%; } }
+.isl-timer { color: #ff9f0a; }
+.isl-call { color: #30d158; }
+.isl-ring { width: 22px; height: 22px; }
+
+.isl-expanded { position: absolute; inset: 0; padding: 22px 24px 18px; display: flex; flex-direction: column; gap: 12px; }
+.isl-row { display: flex; align-items: center; gap: 12px; }
+.isl-title { font-size: 15px; font-weight: 600; }
+.isl-sub { font-size: 13px; color: rgba(255, 255, 255, .6); }
+.isl-big { font-size: 40px; font-weight: 300; font-variant-numeric: tabular-nums; margin-left: auto; color: #ff9f0a; letter-spacing: -.02em; }
+.isl-btn { width: 46px; height: 46px; border-radius: 50%; display: grid; place-items: center; background: rgba(255, 255, 255, .16); font-size: 20px; }
+.isl-btn.orange { background: rgba(255, 159, 10, .3); color: #ff9f0a; }
+.isl-btn.red { background: #ff3b30; color: #fff; }
+.isl-btn.plain { background: none; font-size: 26px; }
+.isl-progress { height: 5px; border-radius: 3px; background: rgba(255, 255, 255, .2); overflow: hidden; }
+.isl-progress > i { display: block; height: 100%; background: #fff; border-radius: inherit; }
+.isl-msg { position: absolute; inset: 0; display: flex; align-items: center; gap: 12px; padding: 0 18px; }
+.isl-msg .ico { font-size: 22px; }
+.isl-msg-t { font-size: 15px; font-weight: 600; }
+.isl-msg-s { font-size: 13px; color: rgba(255, 255, 255, .62); }
+.isl-lock { position: absolute; left: 14px; top: 50%; margin-top: -9px; font-size: 18px; color: #fff; }
+.isl-lock.ok { color: #30d158; }
+
+/* Orbe de Siri dentro de la isla (iOS 27) */
+.isl-siri { position: absolute; inset: 0; display: grid; place-items: center; }
+.isl-siri .siri-orb { width: 30px; height: 30px; }
+
+/* ---------- Indicador de inicio ---------- */
+.home-indicator { display: flex; justify-content: center; align-items: flex-end; padding-bottom: 8px; cursor: grab; }
+.home-indicator span { width: 139px; height: 5px; border-radius: 3px; background: #fff; transition: background .3s, opacity .3s; }
+.home-indicator.dark span { background: #000; }
+.home-indicator.hidden span { opacity: 0; }
+
+/* ---------- HUD de volumen/brillo ---------- */
+.vol-hud {
+  position: absolute;
+  left: 8px;
+  top: 190px;
+  width: 16px;
+  height: 150px;
+  border-radius: 10px;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateX(-24px) scaleX(.6);
+  transition: opacity .25s, transform .45s cubic-bezier(.3, 1.3, .5, 1);
+}
+.vol-hud.show { opacity: 1; transform: none; }
+.vol-hud > i { position: absolute; left: 0; right: 0; bottom: 0; background: #fff; transition: height .2s; }
+.vol-hud .ico { position: absolute; left: 50%; bottom: 6px; margin-left: -6px; font-size: 12px; color: #444; z-index: 1; mix-blend-mode: normal; }
+
+/* ---------- Banners de notificación ---------- */
+.banner {
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  top: 8px;
+  padding: 13px 14px;
+  border-radius: 26px;
+  display: flex;
+  gap: 11px;
+  align-items: center;
+  pointer-events: auto;
+  cursor: pointer;
+  transform: translateY(-140%) scale(.9);
+  opacity: 0;
+  transition: transform .55s cubic-bezier(.3, 1.2, .45, 1), opacity .3s;
+}
+.banner.show { transform: none; opacity: 1; }
+.banner.from-island { transform-origin: 50% 0; }
+
+.notif-icon { width: 38px; height: 38px; flex: none; }
+.notif-icon .app-icon { width: 38px; height: 38px; border-radius: 10px; }
+.notif-body { flex: 1; min-width: 0; }
+.notif-head { display: flex; justify-content: space-between; gap: 8px; font-size: 15px; font-weight: 600; }
+.notif-head time { font-weight: 400; font-size: 13px; opacity: .55; white-space: nowrap; }
+.notif-text { font-size: 15px; line-height: 1.25; opacity: .92; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+
+/* ---------- Ventanas de apps ---------- */
+.app-window {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: var(--app-bg);
+  color: var(--label);
+  pointer-events: auto;
+  border-radius: 56px;
+  will-change: transform;
+  transform-origin: 50% 50%;
+  contain: layout paint;
+}
+html.fullscreen .app-window { border-radius: 0; }
+.app-window.interacting { transition: none !important; }
+.app-window.hidden { visibility: hidden; pointer-events: none; }
+.app-window.in-switcher { border-radius: 40px; box-shadow: 0 10px 40px rgba(0, 0, 0, .35); }
+.app-window.in-switcher > .app-root { pointer-events: none; }
+.app-root { position: absolute; inset: 0; overflow: hidden; }
+.app-splash {
+  position: absolute;
+  inset: 0;
+  z-index: 50;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+}
+.app-splash .app-icon { width: 100%; height: auto; aspect-ratio: 1; border-radius: 0; box-shadow: none; }
+.app-splash .app-icon::after { display: none; }
+
+/* ---------- Multitarea ---------- */
+.switcher { background: rgba(0, 0, 0, 0); transition: background .35s; }
+.switcher.open { pointer-events: auto; background: rgba(0, 0, 0, .25); -webkit-backdrop-filter: blur(22px); backdrop-filter: blur(22px); }
+.switcher-empty { position: absolute; inset: 0; display: grid; place-items: center; color: rgba(255, 255, 255, .8); font-size: 17px; opacity: 0; transition: opacity .3s; }
+.switcher.open .switcher-empty.show { opacity: 1; }
+.sw-label {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  transition: opacity .2s;
+  pointer-events: none;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, .35);
+}
+.sw-label .app-icon { width: 30px; height: 30px; border-radius: 8px; }

@@ -1,0 +1,178 @@
+/* ==========================================================================
+   Pantalla bloqueada (incluye el reloj compacto de iOS 27)
+   ========================================================================== */
+
+.lock { color: #fff; will-change: transform; }
+.lock.hidden { visibility: hidden; pointer-events: none; }
+.lock-wp { position: absolute; inset: 0; overflow: hidden; }
+.lock-wp::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0, 0, 0, .12), rgba(0, 0, 0, 0) 30%, rgba(0, 0, 0, 0) 70%, rgba(0, 0, 0, .18)); }
+.lock-content { position: absolute; inset: 0; }
+
+.lock-padlock {
+  position: absolute;
+  top: 58px;
+  left: 50%;
+  width: 24px;
+  height: 24px;
+  margin-left: -12px;
+  font-size: 22px;
+  opacity: .95;
+  transition: opacity .3s, transform .3s;
+}
+.lock-padlock .ico { width: 100%; height: 100%; }
+
+.lock-head {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 88px;
+  text-align: center;
+  transition: transform .55s cubic-bezier(.3, 1.2, .45, 1);
+}
+.lock-date { font-size: 21px; font-weight: 600; letter-spacing: -.01em; opacity: .92; text-shadow: 0 1px 4px rgba(0, 0, 0, .15); }
+.lock-date .ctime { display: none; }
+.lock-clock {
+  font-size: 108px;
+  line-height: .95;
+  font-weight: 700;
+  letter-spacing: -.035em;
+  margin-top: 2px;
+  font-variant-numeric: lining-nums;
+  font-feature-settings: "ss01";
+  transition: font-size .55s cubic-bezier(.3, 1.2, .45, 1), opacity .3s, transform .55s cubic-bezier(.3, 1.2, .45, 1);
+}
+.lock-clock.glass-style {
+  color: transparent;
+  background: linear-gradient(175deg, rgba(255, 255, 255, .98) 0%, rgba(255, 255, 255, .78) 45%, rgba(255, 255, 255, .55) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-stroke: .6px rgba(255, 255, 255, .55);
+  filter: drop-shadow(0 3px 10px rgba(0, 0, 0, .16));
+}
+.lock-clock.solid-style { color: #fff; text-shadow: 0 2px 12px rgba(0, 0, 0, .15); }
+
+.lock-widgets {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 16px;
+  transition: margin .5s cubic-bezier(.3, 1.2, .45, 1);
+}
+.lw {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 600;
+  gap: 1px;
+}
+.lw .ico { font-size: 18px; }
+.lw b { font-size: 20px; font-weight: 600; line-height: 1; }
+.lw small { font-size: 10px; font-weight: 600; opacity: .75; letter-spacing: .02em; }
+.lw-ring { position: relative; width: 48px; height: 48px; display: grid; place-items: center; }
+.lw-ring svg { position: absolute; inset: 0; transform: rotate(-90deg); }
+.lw-wide { width: 156px; border-radius: 22px; align-items: flex-start; padding: 0 14px; }
+.lw-wide small { opacity: .7; }
+.lw-wide b { font-size: 15px; }
+
+/* Reloj compacto (iOS 27) */
+.lock.compact .lock-head { top: 62px; }
+.lock.compact .lock-date { display: flex; justify-content: center; align-items: baseline; gap: 10px; font-size: 21px; }
+.lock.compact .lock-date .ctime { display: inline; font-weight: 700; letter-spacing: -.01em; }
+.lock.compact .lock-clock { font-size: 0; opacity: 0; margin: 0; }
+.lock.compact .lock-widgets { margin-top: 14px; }
+.lock.compact .lock-padlock { opacity: 0; }
+
+/* Notificaciones */
+.lock-notifs {
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  bottom: 118px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 46%;
+  overflow: hidden;
+}
+.lock-notifs-title { text-align: center; font-size: 15px; font-weight: 600; opacity: .8; margin-bottom: 2px; text-shadow: 0 1px 3px rgba(0, 0, 0, .2); }
+.lnotif {
+  border-radius: 24px;
+  padding: 12px 14px;
+  display: flex;
+  gap: 11px;
+  align-items: center;
+  cursor: pointer;
+  transition: transform .45s cubic-bezier(.3, 1.2, .45, 1), opacity .3s, margin .45s;
+  color: var(--lg-ink);
+}
+.lock-notifs .lnotif { color: #fff; }
+.screen[data-theme="light"] .lock-notifs .lnotif { color: #111; }
+.nstack { position: relative; margin-bottom: 16px; isolation: isolate; }
+.nstack .lnotif { position: relative; z-index: 3; }
+.nstack .ghost { position: absolute; left: 0; right: 0; top: 0; bottom: 0; border-radius: 24px; pointer-events: none; }
+.nstack .ghost.g1 { z-index: 2; transform: translateY(9px) scale(.94); opacity: .8; }
+.nstack .ghost.g2 { z-index: 1; transform: translateY(18px) scale(.88); opacity: .55; }
+.nstack-more { text-align: center; font-size: 13px; font-weight: 600; color: #fff; opacity: .75; text-shadow: 0 1px 3px rgba(0, 0, 0, .25); }
+.lnotif.gone { transform: translateX(110%); opacity: 0; }
+
+/* Reproductor en pantalla bloqueada */
+.lock-player { border-radius: 28px; padding: 14px; color: #fff; }
+.screen[data-theme="light"] .lock-player { color: #111; }
+.lock-player .lp-top { display: flex; gap: 12px; align-items: center; }
+.lock-player .lp-art { width: 52px; height: 52px; border-radius: 10px; background-size: cover; box-shadow: 0 4px 12px rgba(0, 0, 0, .2); }
+.lock-player .lp-meta { flex: 1; min-width: 0; }
+.lock-player .lp-meta b { display: block; font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.lock-player .lp-meta span { font-size: 14px; opacity: .65; }
+.lock-player .lp-bar { margin: 12px 4px 4px; height: 5px; border-radius: 3px; background: rgba(127, 127, 127, .35); overflow: hidden; }
+.lock-player .lp-bar i { display: block; height: 100%; background: currentColor; opacity: .85; border-radius: inherit; }
+.lock-player .lp-ctrl { display: flex; justify-content: center; gap: 44px; margin-top: 10px; font-size: 28px; }
+.lock-player .lp-ctrl button { display: grid; place-items: center; }
+
+/* Botones rápidos */
+.lock-quick {
+  position: absolute;
+  bottom: 44px;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 21px;
+  transition: transform .3s cubic-bezier(.3, 1.3, .5, 1), background .2s;
+}
+.lock-quick:active { transform: scale(1.18); }
+.lock-quick.left { left: 46px; }
+.lock-quick.right { right: 46px; }
+.lock-quick.on { background: #fff; color: #000; }
+
+.lock-hint {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 22px;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 500;
+  opacity: 0;
+  transition: opacity .4s, transform .4s;
+  transform: translateY(6px);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, .25);
+  pointer-events: none;
+}
+.lock-hint.show { opacity: .85; transform: none; }
+
+/* Siempre activa */
+.screen.off.aod .lock { filter: brightness(.55) saturate(.6); }
+
+/* Fondos claros: texto oscuro para mantener el contraste */
+.lock.on-light { color: #1c1c1e; }
+.lock.on-light .lock-clock.glass-style { background: linear-gradient(175deg, rgba(20, 20, 30, .92), rgba(20, 20, 30, .62)); -webkit-background-clip: text; background-clip: text; -webkit-text-stroke: .6px rgba(255, 255, 255, .4); }
+.lock.on-light .lock-clock.solid-style { color: #1c1c1e; text-shadow: none; }
+.lock.on-light .lock-date, .lock.on-light .lock-hint, .lock.on-light .nstack-more { text-shadow: none; color: #1c1c1e; }
+.lock.on-light .glass-clear { color: #1c1c1e; }
+.lock.on-light .lw-ring svg circle:first-child { stroke: rgba(0, 0, 0, .15); }

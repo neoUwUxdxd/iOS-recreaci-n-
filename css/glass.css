@@ -1,0 +1,124 @@
+/* ==========================================================================
+   Liquid Glass: material translúcido con reflejos especulares.
+   --glass (0 → 1) se controla desde Ajustes → Liquid Glass (novedad de iOS 27).
+   ========================================================================== */
+
+.screen {
+  --glass: .35;
+  --lg-alpha: calc(.05 + var(--glass) * .72);
+  --lg-blur: calc(3px + var(--glass) * 22px);
+  --lg-sat: calc(1.9 - var(--glass) * .5);
+  --lg-edge: calc(.85 - var(--glass) * .45);
+}
+.screen[data-theme="light"] { --lg-rgb: 255, 255, 255; --lg-ink: #000; --lg-ink2: rgba(0, 0, 0, .55); }
+.screen[data-theme="dark"] { --lg-rgb: 40, 40, 44; --lg-ink: #fff; --lg-ink2: rgba(255, 255, 255, .6); }
+
+:where(.glass, .glass-clear, .glass-dark, .glass-btn) { position: relative; }
+
+.glass {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, calc(var(--lg-edge) * .18)), rgba(255, 255, 255, 0) 40%),
+    rgba(var(--lg-rgb), var(--lg-alpha));
+  -webkit-backdrop-filter: blur(var(--lg-blur)) saturate(var(--lg-sat));
+  backdrop-filter: blur(var(--lg-blur)) saturate(var(--lg-sat));
+  box-shadow:
+    inset 0 0 0 .5px rgba(255, 255, 255, calc(var(--lg-edge) * .45)),
+    inset 0 1px 1.5px rgba(255, 255, 255, calc(var(--lg-edge) * .9)),
+    inset 0 -1px 1px rgba(255, 255, 255, calc(var(--lg-edge) * .3)),
+    inset 0 0 18px rgba(255, 255, 255, calc(var(--lg-edge) * .12)),
+    0 8px 28px rgba(0, 0, 0, .14);
+  color: var(--lg-ink);
+}
+.glass::before, .glass-clear::before, .glass-dark::before, .glass-btn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(135deg,
+      rgba(255, 255, 255, calc(var(--lg-edge) * 1)) 0%,
+      rgba(255, 255, 255, calc(var(--lg-edge) * .15)) 30%,
+      rgba(255, 255, 255, 0) 55%,
+      rgba(255, 255, 255, calc(var(--lg-edge) * .2)) 75%,
+      rgba(255, 255, 255, calc(var(--lg-edge) * .7)) 100%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+/* Cristal claro sobre fondos (independiente del tema) */
+.glass-clear {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, calc(var(--lg-edge) * .2)), rgba(255, 255, 255, 0) 45%),
+    rgba(255, 255, 255, calc(var(--lg-alpha) * .55));
+  -webkit-backdrop-filter: blur(var(--lg-blur)) saturate(var(--lg-sat)) brightness(1.04);
+  backdrop-filter: blur(var(--lg-blur)) saturate(var(--lg-sat)) brightness(1.04);
+  box-shadow:
+    inset 0 1px 1.5px rgba(255, 255, 255, calc(var(--lg-edge) * .9)),
+    inset 0 -1px 1px rgba(255, 255, 255, calc(var(--lg-edge) * .25)),
+    inset 0 0 16px rgba(255, 255, 255, calc(var(--lg-edge) * .14)),
+    0 6px 22px rgba(0, 0, 0, .12);
+  color: #fff;
+}
+.screen[data-theme="dark"] .glass-clear { background: linear-gradient(180deg, rgba(255, 255, 255, calc(var(--lg-edge) * .12)), rgba(255, 255, 255, 0) 45%), rgba(30, 30, 34, calc(var(--lg-alpha) * .9)); }
+
+/* Cristal oscuro (Centro de control, cámara, reproductor) */
+.glass-dark {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, calc(var(--lg-edge) * .12)), rgba(255, 255, 255, 0) 45%),
+    rgba(20, 20, 24, calc(.12 + var(--glass) * .5));
+  -webkit-backdrop-filter: blur(calc(var(--lg-blur) * .9)) saturate(var(--lg-sat));
+  backdrop-filter: blur(calc(var(--lg-blur) * .9)) saturate(var(--lg-sat));
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, calc(var(--lg-edge) * .55)),
+    inset 0 -1px 1px rgba(255, 255, 255, calc(var(--lg-edge) * .15)),
+    inset 0 0 14px rgba(255, 255, 255, calc(var(--lg-edge) * .08));
+  color: #fff;
+}
+
+/* Botón circular de cristal (barras de navegación iOS 26/27) */
+.glass-btn {
+  display: inline-grid;
+  place-items: center;
+  min-width: 44px;
+  height: 44px;
+  padding: 0 12px;
+  border-radius: 999px;
+  font-size: 17px;
+  font-weight: 500;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, calc(var(--lg-edge) * .25)), rgba(255, 255, 255, 0) 50%),
+    rgba(var(--lg-rgb), calc(.3 + var(--glass) * .45));
+  -webkit-backdrop-filter: blur(calc(var(--lg-blur) * .8 + 4px)) saturate(1.8);
+  backdrop-filter: blur(calc(var(--lg-blur) * .8 + 4px)) saturate(1.8);
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, .7),
+    inset 0 -.5px 1px rgba(255, 255, 255, .3),
+    0 4px 16px rgba(0, 0, 0, .1),
+    0 0 0 .5px rgba(0, 0, 0, .04);
+  color: var(--label);
+  transition: transform .35s var(--spring, cubic-bezier(.2, .9, .24, 1)), background .2s;
+}
+.glass-btn.round { width: 44px; padding: 0; }
+.glass-btn .ico { font-size: 20px; }
+.glass-btn:active { transform: scale(1.12); }
+.glass-btn.tinted { background: var(--tint); color: #fff; box-shadow: inset 0 1px 1px rgba(255, 255, 255, .45), 0 4px 14px rgba(0, 0, 0, .15); }
+.screen[data-theme="dark"] .glass-btn { box-shadow: inset 0 1px 1px rgba(255, 255, 255, .22), inset 0 -.5px 1px rgba(255, 255, 255, .1), 0 4px 16px rgba(0, 0, 0, .3); }
+
+/* Refracción real (solo navegadores Chromium) */
+.refraction .refract {
+  -webkit-backdrop-filter: url(#lg-distort) blur(var(--lg-blur)) saturate(var(--lg-sat));
+  backdrop-filter: url(#lg-distort) blur(var(--lg-blur)) saturate(var(--lg-sat));
+}
+
+/* Lente de selección (pestañas, segmentos) */
+.lens {
+  position: absolute;
+  border-radius: 999px;
+  background: rgba(var(--lg-rgb), .55);
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, .8), inset 0 -1px 1px rgba(255, 255, 255, .2), 0 2px 10px rgba(0, 0, 0, .08);
+  transition: transform .45s cubic-bezier(.3, 1.3, .5, 1), width .45s cubic-bezier(.3, 1.3, .5, 1);
+  pointer-events: none;
+}
+.screen[data-theme="dark"] .lens { background: rgba(255, 255, 255, .14); box-shadow: inset 0 1px 1px rgba(255, 255, 255, .25); }
