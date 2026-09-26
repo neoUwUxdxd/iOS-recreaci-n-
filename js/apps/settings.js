@@ -306,7 +306,7 @@
           const pick = h(`<div class="group" style="padding:18px 10px 14px;display:flex;justify-content:space-around">
             ${[['light', 'Claro', '#f2f2f7', '#fff'], ['dark', 'Oscuro', '#1c1c1e', '#2c2c2e']].map(([v, l, bg, fg]) => `
               <button class="theme-pick" data-v="${v}" style="display:flex;flex-direction:column;align-items:center;gap:8px">
-                <div style="width:78px;height:156px;border-radius:14px;border:3px solid #000;background:${bg};padding:22px 8px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;align-content:start;box-shadow:0 2px 8px rgba(0,0,0,.15)">${'<i style="aspect-ratio:1;border-radius:5px;background:' + fg + '"></i>'.repeat(9)}</div>
+                <div style="width:78px;height:156px;border-radius:14px;border:3px solid #000;background:${bg};padding:22px 8px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;align-content:start;box-shadow:0 2px 8px rgba(0,0,0,.15)">${('<i style="aspect-ratio:1;border-radius:5px;background:' + fg + '"></i>').repeat(9)}</div>
                 <span style="font-size:15px">${l}</span><span class="radio" style="width:22px;height:22px;border-radius:50%;border:1.5px solid var(--label3);display:grid;place-items:center;color:#fff"></span></button>`).join('')}
           </div>`);
           const renderPick = () => pick.querySelectorAll('.theme-pick').forEach((b2) => {

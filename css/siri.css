@@ -16,19 +16,18 @@
 .siri-halo {
   position: absolute;
   left: 50%;
-  top: 30px;
-  width: 10px;
-  height: 10px;
-  margin: -5px 0 0 -5px;
+  top: -260px;
+  width: 620px;
+  height: 620px;
+  margin-left: -310px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(255, 110, 220, .55), rgba(90, 170, 255, .35) 40%, rgba(255, 170, 80, .15) 60%, transparent 70%);
+  background: radial-gradient(circle at 50% 50%, rgba(255, 120, 220, .55), rgba(120, 110, 255, .38) 28%, rgba(60, 190, 255, .22) 45%, rgba(255, 170, 80, .1) 58%, transparent 70%);
   opacity: 0;
-  transform: scale(1);
-  transition: transform .9s cubic-bezier(.2, .9, .24, 1), opacity .6s;
+  transform: scale(.05);
+  transition: transform .9s cubic-bezier(.2, .9, .24, 1), opacity .5s;
   pointer-events: none;
-  filter: blur(8px);
 }
-.siri-layer.open .siri-halo { opacity: .9; transform: scale(70); }
+.siri-layer.open .siri-halo { opacity: 1; transform: scale(1); }
 .siri-layer.thinking .siri-halo { animation: halo 2.4s ease-in-out infinite; }
 @keyframes halo { 50% { opacity: .5; } }
 

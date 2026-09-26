@@ -14,7 +14,10 @@
   font-weight: 600;
   font-size: 17px;
   transition: color .3s, opacity .3s;
+  pointer-events: auto;
+  touch-action: none;
 }
+.status-bar > * { pointer-events: none; }
 .status-bar.dark { color: #000; }
 .status-bar.hidden { opacity: 0; }
 .sb-left, .sb-right { display: flex; align-items: center; gap: 6px; height: 100%; padding-top: 5px; width: calc((var(--W, 402px) - 125px) / 2); justify-content: center; }
@@ -111,7 +114,7 @@
 .isl-siri .siri-orb { width: 30px; height: 30px; }
 
 /* ---------- Indicador de inicio ---------- */
-.home-indicator { display: flex; justify-content: center; align-items: flex-end; padding-bottom: 8px; cursor: grab; }
+.home-indicator { display: flex; justify-content: center; align-items: flex-end; padding-bottom: 8px; cursor: grab; touch-action: none; }
 .home-indicator span { width: 139px; height: 5px; border-radius: 3px; background: #fff; transition: background .3s, opacity .3s; }
 .home-indicator.dark span { background: #000; }
 .home-indicator.hidden span { opacity: 0; }
@@ -138,7 +141,7 @@
   position: absolute;
   left: 10px;
   right: 10px;
-  top: 8px;
+  top: 56px;
   padding: 13px 14px;
   border-radius: 26px;
   display: flex;

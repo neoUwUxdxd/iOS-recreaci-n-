@@ -104,7 +104,10 @@
     open(id, originEl) {
       if (!OS.appDefs[id]) return;
       if (S.get('locked')) { OS.lock.unlock(() => api.open(id, originEl)); return; }
-      if (OS.sys.switcher) { OS.switcher.openApp(id); return; }
+      if (OS.sys.switcher) {
+        if (wins.has(id)) { OS.switcher.openApp(id); return; }
+        OS.switcher.close();
+      }
       if (OS.spotlight && OS.spotlight.isOpen) OS.spotlight.close();
       if (OS.cc && OS.cc.isOpen) OS.cc.close();
       if (OS.home) OS.home.exitEdit();

@@ -41,7 +41,7 @@
     if (e.button !== 0 || !S.get('screenOn')) return;
     const p = pt(e);
     const W = OS.W, H = OS.H;
-    const topZone = p.y < 46 && !OS.island.el.contains(e.target);
+    const topZone = p.y < 50 && !OS.island.el.contains(e.target);
     const bottomZone = p.y > H - 30;
     if (!topZone && !bottomZone) return;
     if (e.target.closest('.overlay')) return;
@@ -69,8 +69,10 @@
         screen.removeEventListener('pointercancel', up);
         const v = dy / Math.max(1, performance.now() - t0);
         if (!started) {
-          // Un toque en la esquina derecha abre el Centro de control (útil con ratón)
+          // Un toque en la esquina derecha abre el Centro de control (útil con ratón);
+          // en el resto de la barra de estado, sube al principio como en iOS.
           if (which === 'cc') OS.cc.open();
+          else scrollToTop();
           return;
         }
         const open = dy > (which === 'cc' ? 90 : 140) || v > 0.5;
@@ -142,6 +144,13 @@
     screen.addEventListener('pointerup', up);
     screen.addEventListener('pointercancel', up);
   }, true);
+
+  function scrollToTop() {
+    const w = OS.sys.current && !OS.sys.switcher && OS.windows.get(OS.sys.current);
+    if (!w) return;
+    const cands = [...w.el.querySelectorAll('.page-scroll, .wx-scroll, .ph-scroll, .sa-scroll, .cal-body')].filter((x) => x.offsetParent && x.scrollTop > 0);
+    cands.forEach((x) => x.scrollTo({ top: 0, behavior: 'smooth' }));
+  }
 
   function closeOverlaysPeek() {
     return OS.sys.siriOpen || OS.cc.isOpen || OS.nc.isOpen || OS.spotlight.isOpen;

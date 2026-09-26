@@ -104,7 +104,7 @@
     // Ajustes rápidos
     m = /(activa|enciende|pon|conecta|desactiva|apaga|quita|desconecta)\s+(el |la |los |las )?(wi ?fi|wifi|bluetooth|modo avion|modo oscuro|modo claro|linterna|no molestar|modo concentracion|concentracion|bajo consumo|modo de bajo consumo|datos( moviles)?|modo silencio|silencio)/.exec(q);
     if (m) {
-      const on = /(activa|enciende|pon|conecta)/.test(m[1]);
+      const on = !/^(desactiva|apaga|quita|desconecta)/.test(m[1]);
       const what = m[3];
       const map = [
         [/wi ?fi/, 'wifi', 'el Wi‑Fi'], [/bluetooth/, 'bluetooth', 'el Bluetooth'], [/avion/, 'airplane', 'el modo avión'],
@@ -179,7 +179,7 @@
     if (/^[\d\s+\-*/^%().,]+$/.test(expr) && /\d/.test(expr) && /[+\-*/^%]/.test(expr)) {
       try {
         const v = calc(expr);
-        return r(`${expr.replace(/\*/g, '×').replace(/\//g, '÷')} = ${fmt.number(v)}`, { card: `<div class="big">${fmt.number(v)}</div>` });
+        return r(`${expr.replace(/\*/g, '×').replace(/\//g, '÷').replace(/\./g, ',')} = ${fmt.number(v)}`, { card: `<div class="big">${fmt.number(v)}</div>` });
       } catch (e) { /* sigue */ }
     }
 

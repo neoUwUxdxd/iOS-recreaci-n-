@@ -84,7 +84,9 @@
       else if (S.get('locked')) dark = !!wpLight;
       else if (sys.spotlight) dark = !S.isDark();
       else if (sys.current) {
-        const style = sys.currentStyle || 'auto';
+        const w = OS.windows && OS.windows.get(sys.current);
+        const st = w && w.inst ? w.inst.statusStyle : sys.currentStyle;
+        const style = (typeof st === 'function' ? st() : st) || 'auto';
         dark = style === 'dark' || (style === 'auto' && !S.isDark());
       } else dark = !!wpLight;
       if (sys.ccOpen) hideIndicator = true;

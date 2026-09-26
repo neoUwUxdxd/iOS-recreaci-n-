@@ -56,7 +56,7 @@
     OS.audio.alarm(3);
     OS.util.haptic([200, 100, 200]);
     OS.island.flash({ icon: 'timer', color: '#ff9f0a', title: 'Temporizador', sub: '¡Tiempo!', right: '<span class="isl-btn orange" style="width:40px;height:40px">' + OS.icon('close') + '</span>' }, 4500);
-    OS.notify({ app: 'clock', title: 'Temporizador', body: 'El temporizador ha terminado.' });
+    OS.notify({ app: 'clock', title: 'Temporizador', body: 'El temporizador ha terminado.', banner: false });
     if (S.get('locked') && !S.get('screenOn')) OS.hardware.wake(true);
   }
 
@@ -79,7 +79,7 @@
         lastFire = key;
         OS.audio.alarm(5);
         OS.island.flash({ icon: 'alarm', color: '#ff9f0a', title: a.label || 'Alarma', sub: fmt.time(now) }, 6000);
-        OS.notify({ app: 'clock', title: 'Alarma', body: `${a.label || 'Alarma'} · ${fmt.time(now)}` });
+        OS.notify({ app: 'clock', title: 'Alarma', body: `${a.label || 'Alarma'} · ${fmt.time(now)}`, banner: false });
         if (!S.get('screenOn')) OS.hardware.wake(true);
       });
     }

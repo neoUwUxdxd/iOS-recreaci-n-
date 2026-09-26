@@ -76,7 +76,7 @@
     if (!quiet) OS.audio.notify();
     if (S.get('locked')) {
       if (!S.get('screenOn') && !quiet && OS.hardware) OS.hardware.wake(true);
-    } else if (!quiet && !(sys.current === n.app && !sys.switcher)) {
+    } else if (!quiet && n.banner !== false && !(sys.current === n.app && !sys.switcher)) {
       showBanner(n);
     }
     return n;

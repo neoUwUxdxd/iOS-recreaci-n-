@@ -252,6 +252,7 @@
   flex-direction: column;
   overflow: hidden;
   background: var(--bg2);
+  color: var(--label);
 }
 .screen[data-theme="light"] .sheet { background: #f2f2f7; }
 .overlay.show .sheet { transform: none; }

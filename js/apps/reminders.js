@@ -37,7 +37,7 @@
       const DEFS = [
         ['today', 'Hoy', 'calendar', '#0a84ff', (x) => x.today && !x.done],
         ['scheduled', 'Programado', 'clock', '#ff3b30', (x) => !x.today && !x.done],
-        ['all', 'Todos', 'tray', '#1c1c1e', (x) => !x.done],
+        ['all', 'Todos', 'tray', '#5b5b60', (x) => !x.done],
         ['flag', 'Con indicador', 'flag', '#ff9500', (x) => x.flag && !x.done],
         ['done', 'Terminados', 'check', '#8e8e93', (x) => x.done],
       ];
@@ -52,13 +52,13 @@
         const def = DEFS.find((d) => d[0] === id) || DEFS[2];
         const p = OS.ui.page({ title: def[1], back: () => nav.pop(), actions: `<button class="glass-btn" data-toggle-done>${showDone ? 'Ocultar' : 'Mostrar'} terminados</button>` });
         p.classList.add('rem-list-page');
-        p.querySelector('.large-title').style.color = def[3] === '#1c1c1e' ? 'var(--label)' : def[3];
+        p.querySelector('.large-title').style.color = def[3] === '#5b5b60' ? 'var(--label)' : def[3];
         const wrap = h('<div class="rem-items"></div>');
         p.body.appendChild(wrap);
         const render = () => {
           const arr = items.filter((x) => (id === 'done' ? x.done : (showDone || !x.done) && (id === 'all' || def[4]({ ...x, done: false }))));
           wrap.innerHTML = arr.map((x) => `<div class="rem-item ${x.done ? 'done' : ''}" data-id="${x.id}">
-              <button class="rem-check" style="--c:${def[3] === '#1c1c1e' ? 'var(--blue)' : def[3]}" aria-label="Completar"></button>
+              <button class="rem-check" style="--c:${def[3] === '#5b5b60' ? 'var(--blue)' : def[3]}" aria-label="Completar"></button>
               <div class="rem-text" contenteditable="true" spellcheck="false">${esc(x.text)}</div>
               ${x.flag ? `<span style="color:var(--orange)">${OS.icon('flag')}</span>` : ''}
               <button class="rem-del" aria-label="Eliminar">${OS.icon('close')}</button></div>`).join('') ||
@@ -91,7 +91,7 @@
         });
         wrap.addEventListener('keydown', (e) => { e.stopPropagation(); if (e.key === 'Enter') { e.preventDefault(); e.target.blur(); } });
         p.querySelector('[data-toggle-done]').addEventListener('click', (e) => { showDone = !showDone; e.currentTarget.textContent = `${showDone ? 'Ocultar' : 'Mostrar'} terminados`; render(); });
-        const tb = h(`<div class="toolbar"><button class="glass-btn rem-add" style="color:${def[3] === '#1c1c1e' ? 'var(--blue)' : def[3]}">${OS.icon('plus')}<span>Nuevo recordatorio</span></button><span></span></div>`);
+        const tb = h(`<div class="toolbar"><button class="glass-btn rem-add" style="color:${def[3] === '#5b5b60' ? 'var(--blue)' : def[3]}">${OS.icon('plus')}<span>Nuevo recordatorio</span></button><span></span></div>`);
         tb.querySelector('button').addEventListener('click', () => {
           add('', id !== 'scheduled');
           items[0].text = '';

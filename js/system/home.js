@@ -9,6 +9,7 @@
   let layout = normalize(S.get('layout'));
   let page = 0;
   let editing = false;
+  let interacting = false;
   let geo = null;
   let pagesEl, dockEl, searchEl;
   const badges = {};
@@ -189,6 +190,7 @@
     let moved = false;
     let longFired = false;
     let dragInfo = null;
+    interacting = true;
     home.setPointerCapture(e.pointerId);
 
     const lp = (item || widget) ? setTimeout(() => {
@@ -255,6 +257,7 @@
       home.removeEventListener('pointermove', move);
       home.removeEventListener('pointerup', up);
       home.removeEventListener('pointercancel', up);
+      interacting = false;
       if (lp) clearTimeout(lp);
       const p = pt(ev);
       const dx = p.x - start.x, dy = p.y - start.y;
@@ -335,8 +338,9 @@
   }
 
   S.on('wallpaper', () => home.classList.toggle('wp-light-home', !!(OS.wallpapers.byId[S.get('wallpaper')] || {}).light));
-  OS.bus.on('minute', () => { if (!editing) { const pg = page; render(); setPage(pg, false); } });
-  OS.bus.on('weather', () => { if (!editing) render(); });
+  const refresh = () => { if (!editing && !interacting) { const pg = page; render(); setPage(pg, false); } };
+  OS.bus.on('minute', refresh);
+  OS.bus.on('weather', refresh);
 
   OS.home = {
     render,
