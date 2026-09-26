@@ -42,7 +42,8 @@
     const p = pt(e);
     const W = OS.W, H = OS.H;
     const topZone = p.y < 50 && !OS.island.el.contains(e.target);
-    const bottomZone = p.y > H - 30;
+    const coarse = e.pointerType === 'touch' || e.pointerType === 'pen';
+    const bottomZone = p.y > H - (coarse ? 44 : 30);
     if (!topZone && !bottomZone) return;
     if (e.target.closest('.overlay')) return;
 
@@ -71,6 +72,7 @@
         if (!started) {
           // Un toque en la esquina derecha abre el Centro de control (útil con ratón);
           // en el resto de la barra de estado, sube al principio como en iOS.
+          OS.util.swallowClick();
           if (which === 'cc') OS.cc.open();
           else scrollToTop();
           return;

@@ -25,6 +25,8 @@ body {
   -webkit-font-smoothing: antialiased;
   overflow: hidden;
   overscroll-behavior: none;
+  touch-action: manipulation;
+  -webkit-text-size-adjust: 100%;
 }
 
 button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; -webkit-tap-highlight-color: transparent; }
@@ -97,6 +99,8 @@ svg.ico { width: 1em; height: 1em; display: block; flex: none; }
   contain: layout paint;
   user-select: none;
   -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
   touch-action: none;
   cursor: default;
   font-family: var(--font);
@@ -107,11 +111,29 @@ svg.ico { width: 1em; height: 1em; display: block; flex: none; }
 .screen input, .screen textarea, .screen [contenteditable] { user-select: text; -webkit-user-select: text; }
 
 /* Pantalla completa en móviles */
+/* Áreas seguras reales (iPhone): la pantalla simulada queda entre la barra de estado
+   y el indicador de inicio de iOS para que sus gestos no se roben los nuestros. */
+:root {
+  --sat: env(safe-area-inset-top, 0px);
+  --sab: env(safe-area-inset-bottom, 0px);
+  --sal: env(safe-area-inset-left, 0px);
+  --sar: env(safe-area-inset-right, 0px);
+}
+html.fullscreen, html.fullscreen body { background: #000; }
 html.fullscreen #stage { gap: 0; }
-html.fullscreen .device { width: 100vw; height: 100vh; height: 100dvh; border-radius: 0; box-shadow: none; transform: none; margin: 0; }
+html.fullscreen .device { width: 100vw; height: 100vh; height: 100dvh; border-radius: 0; box-shadow: none; transform: none; margin: 0; background: #000; }
 html.fullscreen .device::before, html.fullscreen .hw { display: none; }
-html.fullscreen .screen { inset: 0; border-radius: 0; }
+html.fullscreen .screen { inset: var(--sat) var(--sar) var(--sab) var(--sal); border-radius: 0; }
 html.fullscreen .panel { display: none; }
+/* Con la barra de estado real encima, se ocultan los duplicados en reposo */
+html.real-bars .status-bar .sb-left, html.real-bars .status-bar .sb-right { visibility: hidden; }
+html.real-bars .island:not(.has-content) { opacity: 0; }
+html.real-bars .screen { border-radius: 22px 22px 0 0; }
+
+/* Aviso para usar el iPhone en vertical */
+.rotate-hint { display: none; position: fixed; inset: 0; z-index: 1000; background: #000; color: #fff; flex-direction: column; align-items: center; justify-content: center; gap: 14px; font-size: 17px; text-align: center; padding: 30px; }
+.rotate-hint .ico { font-size: 44px; }
+@media (orientation: landscape) and (max-height: 540px) and (pointer: coarse) { .rotate-hint { display: flex; } }
 
 /* ---------- Tokens de tema ---------- */
 .screen[data-theme="light"] {
@@ -180,6 +202,7 @@ html.fullscreen .panel { display: none; }
 .siri-layer { position: absolute; inset: 0; z-index: 70; pointer-events: none; }
 .status-bar { position: absolute; left: 0; right: 0; top: 0; z-index: 80; pointer-events: none; }
 .home-indicator { position: absolute; left: 0; right: 0; bottom: 0; height: 30px; z-index: 85; }
+html.fullscreen .home-indicator { height: 44px; }
 .island { z-index: 90; }
 .hud { position: absolute; inset: 0; z-index: 95; pointer-events: none; }
 .torch-glow { position: absolute; inset: 0; z-index: 96; pointer-events: none; opacity: 0; transition: opacity .4s; background: radial-gradient(120% 60% at 50% -10%, rgba(255, 250, 220, .22), transparent 60%); }

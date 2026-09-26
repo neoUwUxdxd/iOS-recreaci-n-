@@ -198,6 +198,7 @@
           }, 300);
         } else apply(true);
       } else if (!mode) {
+        OS.util.swallowClick();
         if (id) api.openApp(id);
         else api.close();
       }

@@ -230,9 +230,24 @@
     return Math.round(v * 1e12) / 1e12;
   }
 
+  /**
+   * En pantallas táctiles el navegador lanza un «click» tras levantar el dedo sobre
+   * lo que haya debajo en ese momento. Si el toque acaba de abrir una app o un panel,
+   * ese click caería sobre el contenido nuevo; esto lo descarta.
+   */
+  function swallowClick(ms = 450) {
+    const until = performance.now() + ms;
+    const stop = (e) => {
+      window.removeEventListener('click', stop, true);
+      if (performance.now() <= until) { e.stopPropagation(); e.preventDefault(); }
+    };
+    window.addEventListener('click', stop, true);
+    setTimeout(() => window.removeEventListener('click', stop, true), ms);
+  }
+
   /** Minúsculas y sin tildes, para búsquedas. */
   const norm = (s) => String(s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
 
-  OS.util = { norm, $, $$, h, esc, clamp, lerp, uid, wait, seeded, store, fmt, ease, animate, pt, rectIn, longPress, haptic, calc, reducedMotion };
+  OS.util = { swallowClick, norm, $, $$, h, esc, clamp, lerp, uid, wait, seeded, store, fmt, ease, animate, pt, rectIn, longPress, haptic, calc, reducedMotion };
   OS.bus = bus;
 })();

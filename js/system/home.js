@@ -337,6 +337,7 @@
       const lsc = home.querySelector('.lib-scroll');
       if (lsc) lsc._st0 = undefined;
       if (moved || longFired) return;
+      if (ev.pointerType !== 'mouse') OS.util.swallowClick();
       // Toque
       if (editing) { if (!item && !widget) exitEdit(); return; }
       if (onSearch) { OS.spotlight && OS.spotlight.open(); return; }

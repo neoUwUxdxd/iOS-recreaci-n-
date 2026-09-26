@@ -13,6 +13,26 @@ Recreación de **iOS 27** hecha solo con HTML, CSS y JavaScript. No usa framewor
   ```
 - **GitHub Pages:** *Settings → Pages → Deploy from a branch*. Elige la rama y la carpeta `/ (root)`.
 
+### Probarlo en el iPhone
+
+1. **Publícalo con GitHub Pages** (solo hay que hacerlo una vez):
+   1. En GitHub, abre el repositorio y entra en **Settings → Pages**.
+   2. En *Build and deployment → Source* elige **Deploy from a branch**.
+   3. Elige la rama `claude/recrea-ios-27-c3q6ai` y la carpeta **/ (root)**. Pulsa **Save**.
+   4. En uno o dos minutos estará en `https://neouwuxdxd.github.io/iOS-recreaci-n-/`.
+2. **Ábrelo en Safari** en el iPhone.
+3. **Instálalo como app** para que ocupe toda la pantalla sin las barras de Safari:
+   1. Pulsa **Compartir** y luego **Añadir a pantalla de inicio**.
+   2. Deja activado **Abrir como app web** y confirma con **Añadir**.
+   3. Aparecerá el icono **iOS 27**. Ábrelo desde ahí.
+
+Consejos para usarlo en un iPhone real:
+- La barra de estado y el indicador de inicio de verdad son de iOS. Para los gestos de la recreación, empieza a deslizar **un poco por encima** del borde: sobre la barrita blanca de la recreación o justo debajo de la barra de estado. Si deslizas desde el borde físico, iOS saldrá de la app.
+- Úsalo en vertical.
+- Si la Música no suena, sube el volumen. En iPhone con iOS 16.4 o anterior, desactiva también el modo silencio.
+
+**Sin GitHub Pages:** con el ordenador y el iPhone en la misma Wi‑Fi, ejecuta `python3 -m http.server 8000` en la carpeta del proyecto y abre `http://IP-DEL-ORDENADOR:8000` en Safari. La cámara real y el dictado solo funcionan con HTTPS, así que con este método no estarán disponibles.
+
 ## Novedades de iOS 27 recreadas
 
 | Novedad | Dónde |

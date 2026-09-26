@@ -9,13 +9,29 @@
 
   const BASE_W = 402, BASE_H = 874, BEZ = 13;
 
+  // Sonda para leer env(safe-area-inset-*) a través de las variables CSS
+  const probe = document.createElement('div');
+  probe.style.cssText = 'position:fixed;left:0;top:0;width:0;height:0;visibility:hidden;pointer-events:none;padding:var(--sat) var(--sar) var(--sab) var(--sal)';
+  document.body.appendChild(probe);
+  function safeInsets() {
+    const cs = getComputedStyle(probe);
+    return { t: parseFloat(cs.paddingTop) || 0, r: parseFloat(cs.paddingRight) || 0, b: parseFloat(cs.paddingBottom) || 0, l: parseFloat(cs.paddingLeft) || 0 };
+  }
+
+  const standalone = !!(navigator.standalone || (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches));
+  root.classList.toggle('standalone', standalone);
+
   function layoutDevice() {
     const vw = window.innerWidth, vh = window.innerHeight;
     const full = vw <= 540 || (window.matchMedia('(pointer: coarse)').matches && vw < 820);
     root.classList.toggle('fullscreen', full);
     let W = BASE_W, H = BASE_H, scale = 1;
     if (full) {
-      W = vw; H = vh;
+      const ins = safeInsets();
+      W = Math.round(vw - ins.l - ins.r);
+      H = Math.round(vh - ins.t - ins.b);
+      // Barra de estado real de iOS visible encima (web app a pantalla completa)
+      root.classList.toggle('real-bars', ins.t >= 20);
     } else {
       const panel = vw > 860 ? 356 : 0;
       scale = Math.min(1, (vh - 36) / (H + BEZ * 2), (vw - panel - 40) / (W + BEZ * 2));

@@ -139,6 +139,7 @@
   }
 
   function play() {
+    try { if (navigator.audioSession) navigator.audioSession.type = 'playback'; } catch (e) { /* no disponible */ }
     if (!ensureOut()) { OS.ui.toast('Tu navegador no admite audio web', 'speakerMute'); return; }
     const ctx = OS.audio.ctx;
     if (player.playing) return;
