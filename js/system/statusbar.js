@@ -92,6 +92,7 @@
       } else dark = !!wpLight;
       if (sys.ccOpen) hideIndicator = true;
       bar.classList.toggle('dark', dark);
+      document.getElementById('screen').classList.toggle('app-open', !!sys.current && !sys.switcher);
       // En la pantalla bloqueada iOS muestra el operador en lugar de la hora
       bar.classList.toggle('on-lock', !!S.get('locked') && !sys.ccOpen && !sys.ncOpen);
       indicator.classList.toggle('dark', dark && !sys.ccOpen);

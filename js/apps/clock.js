@@ -299,13 +299,15 @@
       }
 
       function show(id) {
-        if (id !== current) editing = false;
+        const switched = id !== current;
+        if (switched) editing = false;
         current = id;
         tabs.set(id);
         const build = { world: renderWorld, alarm: renderAlarms, stopwatch: renderStopwatch, timer: renderTimer }[id];
         const p = build();
         pages.innerHTML = '';
         pages.appendChild(p);
+        if (switched) OS.ui.fadeIn(p);
         const sc = p.querySelector('.page-scroll'), nav = p.querySelector('.nav');
         sc.addEventListener('scroll', () => nav.classList.toggle('scrolled', sc.scrollTop > 30), { passive: true });
       }

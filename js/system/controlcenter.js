@@ -71,7 +71,7 @@
     media.innerHTML = `
       <div class="m-top">
         <div class="m-art" style="${m && m.art ? `background-image:${m.art}` : ''}">${m && m.art ? '' : OS.icon('note')}</div>
-        <div class="m-meta"><b>${m ? esc(m.title) : 'Sin reproducción'}</b><span>${m ? esc(m.artist) : 'Música'}</span></div>
+        <div class="m-meta"><b>${m ? esc(m.title) : 'No suena nada'}</b><span>${m ? esc(m.artist) : 'Música'}</span></div>
       </div>
       <div class="m-ctrl">
         <button data-m="prev" aria-label="Anterior">${OS.icon('prev')}</button>

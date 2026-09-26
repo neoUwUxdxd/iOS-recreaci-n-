@@ -80,7 +80,7 @@
       let digits = '';
       const view = h('<div class="ph-v"></div>');
       root.appendChild(view);
-      const tabs = OS.ui.tabbar([{ id: 'favs', icon: 'star', label: 'Favoritos' }, { id: 'recents', icon: 'clock', label: 'Recientes' }, { id: 'contacts', icon: 'personCircle', label: 'Contactos' }, { id: 'keypad', icon: 'keypad', label: 'Teclado' }], tab, (id) => { tab = id; render(); });
+      const tabs = OS.ui.tabbar([{ id: 'favs', icon: 'star', label: 'Favoritos' }, { id: 'recents', icon: 'clock', label: 'Recientes' }, { id: 'contacts', icon: 'personCircle', label: 'Contactos' }, { id: 'keypad', icon: 'keypad', label: 'Teclado' }], tab, (id) => { tab = id; render(); OS.ui.fadeIn(view); });
       root.appendChild(tabs);
 
       function render() {

@@ -232,7 +232,7 @@
 .overlay.show .alert { transform: none; opacity: 1; }
 .alert h3 { margin: 0 0 6px; font-size: 17px; font-weight: 600; }
 .alert p { margin: 0 0 16px; font-size: 14px; line-height: 1.35; color: var(--lg-ink2); }
-.alert .alert-input { width: 100%; height: 40px; border-radius: 12px; border: 0; background: var(--fill2); padding: 0 12px; margin-bottom: 14px; outline: none; font-size: 15px; color: var(--label); }
+.alert .alert-input { width: 100%; height: 40px; border-radius: 12px; border: 0; background: var(--fill2); padding: 0 12px; margin-bottom: 14px; outline: none; font-size: 16px; color: var(--label); }
 .alert-btns { display: flex; gap: 8px; }
 .alert-btns.col { flex-direction: column; }
 .alert-btns button { flex: 1; height: 48px; border-radius: 24px; font-size: 17px; font-weight: 500; background: var(--fill2); color: var(--label); }
@@ -300,3 +300,19 @@
 .screen.a11y-motion *, .screen.a11y-motion *::before, .screen.a11y-motion *::after { transition-duration: .05s !important; animation-duration: .01s !important; animation-iteration-count: 1 !important; }
 .screen.a11y-contrast { --sep: rgba(127, 127, 127, .7); --label2: var(--label); }
 .screen.a11y-contrast .glass, .screen.a11y-contrast .glass-clear { outline: 1px solid rgba(127, 127, 127, .6); }
+
+/* ---------- Teclado virtual: las barras inferiores suben con él ---------- */
+.chat-bar, .sa-bar, .sf-bar, .note-page .toolbar { transition: transform .25s ease-out; }
+html.kb-open .chat-bar, html.kb-open .sa-bar, html.kb-open .sf-bar,
+html.kb-open .siri-layer.open .siri-panel, html.kb-open .spotlight.open .spot-field { transform: translateY(calc(-1 * max(0px, var(--kb) - var(--sab) - 18px))); }
+html.kb-open .note-page .toolbar { transform: translateY(calc(-1 * max(0px, var(--kb) - var(--sab) - 18px))); }
+
+/* ---------- Bienvenida ---------- */
+.welcome { padding: 4px 26px 6px; display: flex; flex-direction: column; align-items: center; text-align: center; }
+.welcome-badge { width: 72px; height: 72px; border-radius: 18px; display: grid; place-items: center; font-size: 30px; font-weight: 800; color: #fff; letter-spacing: -.03em; background: linear-gradient(140deg, #4fd1ff, #7b5cff 50%, #ff5fae); box-shadow: inset 0 1px 1px rgba(255, 255, 255, .6), 0 8px 24px rgba(123, 92, 255, .35); }
+.welcome h2 { margin: 14px 0 18px; font-size: 26px; font-weight: 700; letter-spacing: -.02em; text-wrap: balance; }
+.welcome-tips { display: flex; flex-direction: column; gap: 16px; width: 100%; text-align: left; margin-bottom: 24px; }
+.welcome-tip { display: flex; gap: 14px; align-items: flex-start; }
+.welcome-tip > span { font-size: 28px; flex: none; width: 34px; display: grid; place-items: center; }
+.welcome-tip b { display: block; font-size: 16px; font-weight: 600; }
+.welcome-tip p { margin: 2px 0 0; font-size: 14px; line-height: 1.35; color: var(--label2); }

@@ -29,9 +29,11 @@
     if (full) {
       const ins = safeInsets();
       W = Math.round(vw - ins.l - ins.r);
-      H = Math.round(vh - ins.t - ins.b);
-      // Barra de estado real de iOS visible encima (web app a pantalla completa)
-      root.classList.toggle('real-bars', ins.t >= 20);
+      // Barra de estado real de iOS visible encima (web app a pantalla completa):
+      // la franja de estado simulada se esconde bajo ella (ver base.css)
+      const realBars = ins.t >= 20;
+      root.classList.toggle('real-bars', realBars);
+      H = Math.round(vh - (realBars ? ins.t - 30 : ins.t) - ins.b);
     } else {
       const panel = vw > 860 ? 356 : 0;
       scale = Math.min(1, (vh - 36) / (H + BEZ * 2), (vw - panel - 40) / (W + BEZ * 2));
@@ -92,6 +94,21 @@
       .observe(root, { attributes: true, attributeFilter: ['data-theme'] });
   }
 
+  // Teclado virtual (iPhone): sube las barras inferiores para que no queden tapadas
+  if (window.visualViewport) {
+    const vv = window.visualViewport;
+    const onVV = () => {
+      const kb = Math.max(0, window.innerHeight - vv.height - vv.offsetTop);
+      root.style.setProperty('--kb', (kb > 80 ? kb / (OS.scale || 1) : 0) + 'px');
+      root.classList.toggle('kb-open', kb > 80);
+    };
+    vv.addEventListener('resize', onVV);
+    vv.addEventListener('scroll', onVV);
+  }
+
+  // En iOS Safari, :active solo se aplica si hay algún manejador de toque
+  document.addEventListener('touchstart', () => {}, { passive: true });
+
   let resizeT = null;
   window.addEventListener('resize', () => {
     clearTimeout(resizeT);
@@ -131,8 +148,38 @@
   OS.bus.emit('notifs');
   if (firstRun) OS.util.store.set('welcomed', true);
 
+  // Animación de encendido: el fondo aparece desde negro y el reloj sube a su sitio
+  if (!OS.util.reducedMotion()) {
+    OS.util.animate(document.querySelector('#lock .lock-wp'), [{ opacity: 0, transform: 'scale(1.08)' }, { opacity: 1, transform: 'scale(1)' }], { duration: 1100, easing: 'cubic-bezier(.2,.8,.2,1)', fill: 'none' });
+    OS.util.animate(document.querySelector('#lock .lock-content'), [{ opacity: 0, transform: 'translateY(18px) scale(.97)' }, { opacity: 1, transform: 'none' }], { duration: 900, delay: 250, easing: 'cubic-bezier(.2,.9,.24,1)', fill: 'backwards' });
+  }
+
   // Primer arranque: muestra la indicación de desbloqueo
-  setTimeout(() => OS.lock.showHint(), 1200);
+  setTimeout(() => OS.lock.showHint(), 1400);
+
+  // Bienvenida (solo la primera vez): explica los gestos, sobre todo en el móvil
+  OS.bus.on('unlocked', () => {
+    if (OS.util.store.get('onboarded', false)) return;
+    OS.util.store.set('onboarded', true);
+    setTimeout(showWelcome, 500);
+  });
+
+  function showWelcome() {
+    const touch = window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
+    const tips = [
+      ['arrowUp', '#0a84ff', 'Ir a inicio', touch ? 'Desliza hacia arriba desde la barrita inferior. Desliza y mantén para ver las apps abiertas.' : 'Desliza hacia arriba desde abajo o pulsa Esc. Mantén el gesto (o pulsa A) para la multitarea.'],
+      ['grid', '#8e8e93', 'Centro de control', touch ? 'Desliza hacia abajo desde la esquina superior derecha.' : 'Desliza hacia abajo desde la esquina superior derecha o pulsa C.'],
+      ['sparkles', '#bf5af2', 'Siri AI', 'Abre la app Siri o mantén pulsado el botón lateral y pide lo que quieras.'],
+      ['droplet', '#30b0c7', 'Liquid Glass a tu gusto', 'En Ajustes → Liquid Glass elige entre transparente y tintado.'],
+    ];
+    const content = OS.util.h(`<div class="welcome">
+      <div class="welcome-badge">27</div>
+      <h2>Bienvenido a iOS 27</h2>
+      <div class="welcome-tips">${tips.map(([i, c, t, d]) => `<div class="welcome-tip"><span style="color:${c}">${OS.icon(i)}</span><div><b>${t}</b><p>${d}</p></div></div>`).join('')}</div>
+      <button class="btn block" data-go>Continuar</button></div>`);
+    const sh = OS.ui.sheet({ title: '', content });
+    content.querySelector('[data-go]').addEventListener('click', () => sh.close());
+  }
 
   // Precalienta el audio con la primera interacción (política de autoplay)
   const warm = () => { OS.audio.ensure(); window.removeEventListener('pointerdown', warm); };

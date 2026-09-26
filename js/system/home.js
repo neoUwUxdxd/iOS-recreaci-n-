@@ -80,32 +80,38 @@
     </div>`;
   }
 
+  function widgetsHTML(p) {
+    const g = geo;
+    const wSmall = g.colW + g.icon;
+    const hW = Math.min(wSmall, g.rowH + g.icon - 4);
+    let col = 0;
+    let html = '';
+    p.widgets.forEach((wid) => {
+      const x0 = g.padX + col * g.colW + (g.colW - g.icon) / 2;
+      if (wid === 'photosLarge') {
+        html += widgetHTML(wid, x0, g.top + 4, g.colW * 3 + g.icon, hW);
+        col += 4;
+      } else {
+        html += widgetHTML(wid, x0, g.top + 4, wSmall, hW);
+        col += 2;
+      }
+    });
+    return html;
+  }
+
   function pageHTML(p, pi) {
     let html = '';
     let rowStart = 0;
-    const g = geo;
     if (p.widgets.length) {
       rowStart = 2;
-      const wSmall = g.colW + g.icon;
-      const hW = Math.min(wSmall, g.rowH + g.icon - 4);
-      let col = 0;
-      p.widgets.forEach((wid) => {
-        const x0 = g.padX + col * g.colW + (g.colW - g.icon) / 2;
-        if (wid === 'photosLarge') {
-          html += widgetHTML(wid, x0, g.top + 4, g.colW * 3 + g.icon, hW);
-          col += 4;
-        } else {
-          html += widgetHTML(wid, x0, g.top + 4, wSmall, hW);
-          col += 2;
-        }
-      });
+      html += `<div class="page-widgets" style="display:contents">${widgetsHTML(p)}</div>`;
     }
     p.apps.forEach((id, i) => {
       const col = i % 4, row = rowStart + Math.floor(i / 4);
       const { x, y } = cellPos(col, row);
       html += itemHTML(id, x, y);
     });
-    return `<div class="home-page" data-page="${pi}" style="width:${g.W}px">${html}</div>`;
+    return `<div class="home-page" data-page="${pi}" style="width:${geo.W}px">${html}</div>`;
   }
 
   const pageCount = () => layout.pages.length + 1;
@@ -176,10 +182,44 @@
 
   function fillPhotoWidget() {
     const img = home.querySelector('[data-photo-widget]');
-    if (img && OS.photosLib) {
-      const src = OS.photosLib.featured();
-      if (src) img.src = src;
-    }
+    if (!img || !OS.photosLib) return;
+    const fill = () => { const src = OS.photosLib.featured(); if (src && img.isConnected) img.src = src; };
+    // Generar la biblioteca cuesta unos milisegundos: se hace cuando el navegador está libre
+    if (OS.photosLib.ready()) fill();
+    else if (window.requestIdleCallback) window.requestIdleCallback(fill, { timeout: 2500 });
+    else setTimeout(fill, 1200);
+  }
+
+  /** Refresca solo los widgets (reloj del sistema, tiempo, eventos). */
+  function refreshWidgets() {
+    if (!pagesEl || !geo) return;
+    home.querySelectorAll('.page-widgets').forEach((box) => {
+      const pi = +box.closest('.home-page').dataset.page;
+      if (layout.pages[pi]) box.innerHTML = widgetsHTML(layout.pages[pi]);
+    });
+    fillPhotoWidget();
+  }
+
+  /** Entrada escalonada de iconos al desbloquear (como en iOS). */
+  function intro() {
+    if (OS.util.reducedMotion() || !pagesEl) return;
+    const pg = pagesEl.children[page];
+    if (!pg) return;
+    const cx = geo.W / 2, cy = geo.H / 2;
+    const items = [...pg.querySelectorAll('.home-item'), ...pg.querySelectorAll('.widget'), ...dockEl.querySelectorAll('.dock-item')];
+    items.forEach((el) => {
+      const r = el.getBoundingClientRect();
+      const sr = OS.screenRect || home.getBoundingClientRect();
+      const s = OS.scale || 1;
+      const x = (r.left - sr.left) / s + r.width / (2 * s), y = (r.top - sr.top) / s + r.height / (2 * s);
+      const dx = (x - cx) * 0.22, dy = (y - cy) * 0.22;
+      const d = Math.hypot(x - cx, y - cy);
+      const targets = el.classList.contains('home-item') ? [...el.children] : [el];
+      targets.forEach((t) => t.animate(
+        [{ transform: `translate(${dx}px, ${dy}px) scale(1.28)`, opacity: 0 }, { transform: 'translate(0,0) scale(1)', opacity: 1 }],
+        { duration: 560, delay: d * 0.22, easing: 'cubic-bezier(.2,.9,.24,1)', fill: 'backwards' },
+      ));
+    });
   }
 
   function setPage(i, animated = true) {
@@ -202,12 +242,16 @@
     if (editing) return;
     editing = true;
     home.classList.add('editing');
+    OS.sys.hideStatus = true;
+    OS.chrome.update();
     OS.util.haptic(15);
   }
   function exitEdit() {
     if (!editing) return;
     editing = false;
     home.classList.remove('editing');
+    OS.sys.hideStatus = false;
+    OS.chrome.update();
     S.set('layout', JSON.parse(JSON.stringify(layout)));
   }
 
@@ -397,12 +441,14 @@
   }
 
   S.on('wallpaper', () => home.classList.toggle('wp-light-home', !!(OS.wallpapers.byId[S.get('wallpaper')] || {}).light));
-  const refresh = () => { if (!editing && !interacting) { const pg = page; render(); setPage(pg, false); } };
+  const refresh = () => { if (!editing && !interacting) refreshWidgets(); };
   OS.bus.on('minute', refresh);
   OS.bus.on('weather', refresh);
 
   OS.home = {
     render,
+    intro,
+    refreshWidgets,
     setPage,
     get page() { return page; },
     iconRect,

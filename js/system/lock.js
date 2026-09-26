@@ -184,9 +184,11 @@
     startDrag,
     unlock(cb) {
       if (!S.get('locked')) { cb && cb(); return; }
+      const dragged = !!lock.style.transform;
       const from = lock.style.transform || 'translateY(0)';
       lock.style.transition = 'none';
       $pad.innerHTML = OS.icon('lockOpen');
+      $pad.animate([{ transform: 'scale(1)' }, { transform: 'scale(1.3)' }, { transform: 'scale(1)' }], { duration: 300, easing: 'cubic-bezier(.3,1.4,.5,1)' });
       OS.audio.unlock();
       const a = animate(lock, [{ transform: from }, { transform: `translateY(${-OS.H}px)` }], { duration: 420, easing: ease.smooth });
       const target = OS.sys.current ? appsLayer : home;
@@ -196,7 +198,10 @@
       S.set('locked', false);
       expanded = false;
       OS.chrome.update();
+      // Los iconos «vuelan» a su sitio si se desbloquea sin arrastrar
+      if (target === home && !dragged && !cb) OS.home.intro();
       a.onfinish = () => {
+        OS.bus.emit('unlocked');
         lock.classList.add('hidden');
         lock.style.transform = '';
         a.cancel();

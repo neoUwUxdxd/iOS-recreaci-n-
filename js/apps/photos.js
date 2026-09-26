@@ -150,6 +150,7 @@
   }
 
   const lib = {
+    ready: () => !!library,
     list: () => ensure(),
     count: () => ensure().length,
     featured() {
@@ -256,7 +257,7 @@
       let tab = 'library';
       let cols = 3;
 
-      const tabs = OS.ui.tabbar([{ id: 'library', icon: 'photos', label: 'Biblioteca' }, { id: 'collections', icon: 'grid', label: 'Colecciones' }], tab, (id) => { tab = id; render(); }, { search: true });
+      const tabs = OS.ui.tabbar([{ id: 'library', icon: 'photos', label: 'Biblioteca' }, { id: 'collections', icon: 'grid', label: 'Colecciones' }], tab, (id) => { tab = id; render(); OS.ui.fadeIn(view); }, { search: true });
       root.appendChild(tabs);
       const searchBtn = h(`<button class="tab-search glass" aria-label="Buscar">${OS.icon('search')}</button>`);
       root.appendChild(searchBtn);

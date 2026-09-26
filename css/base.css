@@ -114,6 +114,7 @@ svg.ico { width: 1em; height: 1em; display: block; flex: none; }
 /* Áreas seguras reales (iPhone): la pantalla simulada queda entre la barra de estado
    y el indicador de inicio de iOS para que sus gestos no se roben los nuestros. */
 :root {
+  --kb: 0px;
   --sat: env(safe-area-inset-top, 0px);
   --sab: env(safe-area-inset-bottom, 0px);
   --sal: env(safe-area-inset-left, 0px);
@@ -128,7 +129,9 @@ html.fullscreen .panel { display: none; }
 /* Con la barra de estado real encima, se ocultan los duplicados en reposo */
 html.real-bars .status-bar .sb-left, html.real-bars .status-bar .sb-right { visibility: hidden; }
 html.real-bars .island:not(.has-content) { opacity: 0; }
-html.real-bars .screen { border-radius: 22px 22px 0 0; }
+/* La franja de estado simulada (54 px) queda casi toda bajo la barra real:
+   solo asoman 24 px, suficientes para los gestos de la recreación. */
+html.fullscreen.real-bars .screen { top: calc(var(--sat) - 30px); }
 
 /* Aviso para usar el iPhone en vertical */
 .rotate-hint { display: none; position: fixed; inset: 0; z-index: 1000; background: #000; color: #fff; flex-direction: column; align-items: center; justify-content: center; gap: 14px; font-size: 17px; text-align: center; padding: 30px; }
@@ -314,3 +317,8 @@ kbd {
 .screen[data-theme="dark"] .wallpaper::after { opacity: .22; }
 .screen[data-theme="dark"] .lock-wp .wp { filter: brightness(.82); }
 .wp.wp-photo::after { display: none; }
+
+/* Ahorro: el fondo animado se pausa cuando no se ve */
+.screen.app-open .wallpaper .blob, .screen.off .blob, .lock.hidden .blob { animation-play-state: paused; }
+/* Franja negra bajo la barra de estado real para que su texto siempre se lea */
+html.fullscreen.real-bars .screen::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 30px; background: #000; z-index: 89; pointer-events: none; }

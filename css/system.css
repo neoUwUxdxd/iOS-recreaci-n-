@@ -19,7 +19,7 @@
 }
 .status-bar > * { pointer-events: none; }
 .status-bar.dark { color: #000; }
-.status-bar.hidden { opacity: 0; }
+.status-bar.hidden { opacity: 0; pointer-events: none; }
 .sb-left, .sb-right { display: flex; align-items: center; gap: 6px; height: 100%; padding-top: 5px; width: calc((var(--W, 402px) - 125px) / 2); justify-content: center; }
 .sb-left { padding-left: 16px; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
 .sb-right { justify-content: flex-end; padding-right: 26px; }

@@ -41,7 +41,9 @@
     if (e.button !== 0 || !S.get('screenOn')) return;
     const p = pt(e);
     const W = OS.W, H = OS.H;
-    const topZone = p.y < 50 && !OS.island.el.contains(e.target);
+    // Con la barra de estado real encima solo asoma una franja: se amplía un poco la zona
+    const topLimit = document.documentElement.classList.contains('real-bars') ? 58 : 50;
+    const topZone = p.y < topLimit && !OS.island.el.contains(e.target) && !e.target.closest('.edit-bar');
     const coarse = e.pointerType === 'touch' || e.pointerType === 'pen';
     const bottomZone = p.y > H - (coarse ? 44 : 30);
     if (!topZone && !bottomZone) return;

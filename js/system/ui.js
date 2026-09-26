@@ -316,5 +316,11 @@
     return frag;
   }
 
-  OS.ui = { toggle, slider, segmented, navStack, page, tabbar, alert, sheet, toast, cell, group };
+  /** Transición suave al cambiar de pestaña. */
+  function fadeIn(el) {
+    if (!el || OS.util.reducedMotion()) return;
+    el.animate([{ opacity: 0, transform: 'translateY(8px)' }, { opacity: 1, transform: 'none' }], { duration: 240, easing: 'cubic-bezier(.2,.9,.24,1)' });
+  }
+
+  OS.ui = { fadeIn, toggle, slider, segmented, navStack, page, tabbar, alert, sheet, toast, cell, group };
 })();

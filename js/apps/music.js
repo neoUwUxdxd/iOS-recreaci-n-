@@ -258,7 +258,7 @@
         <div class="mu-mini glass refract"><span class="mu-mini-art"></span><div class="mu-mini-meta"><b></b><span></span></div><button data-m="toggle" aria-label="Reproducir"></button><button data-m="next" aria-label="Siguiente">${OS.icon('next')}</button></div>`;
       const view = root.querySelector('.mu-view');
       const mini = root.querySelector('.mu-mini');
-      const tabs = OS.ui.tabbar([{ id: 'home', icon: 'house', label: 'Inicio' }, { id: 'new', icon: 'grid', label: 'Novedades' }, { id: 'radio', icon: 'waveform', label: 'Radio' }, { id: 'library', icon: 'note', label: 'Biblioteca' }], tab, (id) => { tab = id; render(); }, { search: true });
+      const tabs = OS.ui.tabbar([{ id: 'home', icon: 'house', label: 'Inicio' }, { id: 'new', icon: 'grid', label: 'Novedades' }, { id: 'radio', icon: 'waveform', label: 'Radio' }, { id: 'library', icon: 'note', label: 'Biblioteca' }], tab, (id) => { tab = id; render(); OS.ui.fadeIn(view); }, { search: true });
       root.appendChild(tabs);
       const sb = h(`<button class="tab-search glass" aria-label="Buscar">${OS.icon('search')}</button>`);
       root.appendChild(sb);
