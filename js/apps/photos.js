@@ -381,9 +381,8 @@
           OS.ui.alert({ title: KIND_NAMES[p.kind] || 'Foto', message: `${new Date(p.date).toLocaleString('es-ES')}\n${p.place} · ${p.kind === 'camera' ? 'Cámara del iPhone' : '480 × 640 · generada'}`, host: root });
         });
         v.querySelector('[data-share]').addEventListener('click', async () => {
-          const i2 = await OS.ui.alert({ title: 'Compartir', buttons: [{ label: 'Usar como fondo de pantalla' }, { label: 'Descargar imagen' }, { label: 'Cancelar' }], host: root });
+          const i2 = await OS.ui.alert({ title: 'Compartir', buttons: [{ label: 'Usar como fondo de pantalla' }, { label: 'Cancelar' }], host: root });
           if (i2 === 0) setWallpaper(L[i]);
-          if (i2 === 1) { const a = document.createElement('a'); a.href = L[i].src; a.download = 'foto-ios27.jpg'; a.click(); }
         });
         v.querySelector('[data-del]').addEventListener('click', async () => {
           const i2 = await OS.ui.alert({ title: 'Eliminar foto', message: 'Esta foto se eliminará de la biblioteca.', buttons: [{ label: 'Cancelar' }, { label: 'Eliminar', destructive: true }], host: root });
